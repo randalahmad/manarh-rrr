@@ -1,0 +1,89 @@
+-- Migration 0012: platform administrator identity (Super Admin)
+-- منارة (Manarah) — Super Admin minimal implementation
+-- See docs/architecture/manarah-super-admin-audit.md (§8, §9) and
+-- docs/architecture/manarah-super-admin-implementation-report.md for the
+-- full design rationale. THIS MIGRATION HAS NOT BEEN EXECUTED against any
+-- Neon branch — authored for review only, per explicit instruction to stop
+-- and present the exact schema before running it.
+--
+-- WHY THIS TABLE IS GENUINELY REQUIRED (not a preference):
+-- Every existing authorization mechanism in this codebase is reached
+-- through `organization_memberships` — `role_permissions` has no column
+-- referencing a user directly; the ONLY way a user is ever connected to a
+-- `roles` row is via `organization_memberships.role`, and that table
+-- requires `organization_id uuid NOT NULL REFERENCES organizations(id)`.
+-- There is structurally no way to grant a role that is not tied to some
+-- specific organization using the existing roles/permissions/
+-- role_permissions/organization_memberships catalog. Per explicit
+-- instruction, SUPER_ADMIN must be platform-level, not an organization
+-- member, and organization_memberships must not be contaminated with a
+-- SUPER_ADMIN row. A separate, minimal, dedicated mechanism is therefore
+-- required — this table, and nothing else.
+--
+-- WHY NOT A `roles` ROW + `role_permissions` GRANTS INSTEAD:
+-- Even if a `roles` row for SUPER_ADMIN were added (mirroring the six
+-- existing system roles), there would still be no way to ASSIGN it to a
+-- specific user without an organization_memberships row — the grant
+-- mechanism itself is org-scoped by construction. So this migration does
+-- NOT add a `roles` row or any `role_permissions` grants for SUPER_ADMIN.
+-- Platform-admin authorization is instead a single, explicit allowlist:
+-- presence of an active row in `platform_admins` IS the grant, checked by
+-- a new `requirePlatformAdmin()` guard — the same shape as the existing
+-- `isOrgAdmin()` special case in lib/server/rbac/permissions.ts, which
+-- already bypasses the (area, action) grant list for a role with fixed,
+-- non-negotiable scope, extended here to a role with no organization
+-- context at all. See the implementation report for why the (area,action)
+-- permission catalog is not reused for Super Admin's grants.
+--
+-- FAIL-CLOSED BY CONSTRUCTION: no row (or is_active = false) means "not a
+-- platform administrator" — the same safe default already established for
+-- an unrecognized/unseeded role (see migration 0010's SUPER_ADMIN note).
+-- No row is inserted by this migration — the first platform administrator
+-- must be granted by a separate, deliberate, manual action performed by
+-- whoever has direct database access (the same trust boundary organizations
+-- themselves currently rely on, since there is still no in-app
+-- "create organization" capability's own bootstrap either — this migration
+-- adds ONLY the identity table; the create-organization/bootstrap-org-admin
+-- Server Actions are separate application code, not part of this schema
+-- change). Granting a second platform administrator through the app itself
+-- is deliberately NOT built in this pass (see implementation report,
+-- "remaining limitations") — expanding self-service platform-admin
+-- granting is a materially bigger security decision than the scope
+-- approved here.
+--
+-- SECURITY IMPLICATIONS:
+--  - This table is the single highest-privilege identity surface in the
+--    system: a row here bypasses every organization-level isolation
+--    boundary for the limited set of platform-scoped actions the
+--    application code gates behind requirePlatformAdmin(). It grants
+--    NOTHING beyond what application code explicitly checks for — unlike
+--    ORG_ADMIN, there is no "always true" bypass of unrelated checks; a
+--    platform admin still has zero organization_memberships and therefore
+--    zero access to any org-scoped read/write path (ideas, projects,
+--    evaluations, decisions, etc.) via the EXISTING guards, which never
+--    consult this table.
+--  - granted_by is nullable with ON DELETE SET NULL (not RESTRICT) so
+--    deleting the granter's own identity can never be blocked by, or
+--    silently cascade-delete, someone else's platform-admin grant.
+--  - user_id is ON DELETE CASCADE: if the underlying neon_auth.user row is
+--    ever deleted, the grant is meaningless and must not dangle.
+--  - is_active (rather than deleting the row) preserves who-granted/
+--    when-granted history across a revoke, for accountability — a
+--    revoked-but-historical row must still fail closed, which is why
+--    every read of this table filters on is_active = true, never just
+--    row existence.
+--  - No UPDATE/DELETE application-level grants are established here
+--    (matching audit_logs' own noted Phase 5+ item) — revoking access by
+--    flipping is_active is intentionally a manual/administrative action,
+--    not a self-service one, for the same reason granting is manual.
+
+CREATE TABLE platform_admins (
+  user_id     uuid PRIMARY KEY REFERENCES neon_auth.user(id) ON DELETE CASCADE,
+  granted_by  uuid REFERENCES neon_auth.user(id) ON DELETE SET NULL,
+  granted_at  timestamptz NOT NULL DEFAULT now(),
+  is_active   boolean NOT NULL DEFAULT true
+);
+
+-- No additional index needed beyond the primary key: this table is looked
+-- up by user_id only, once per request, and is expected to hold at most a
+-- handful of rows.

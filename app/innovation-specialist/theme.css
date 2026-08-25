@@ -1,0 +1,50 @@
+/*
+ * Design tokens for the Innovation Specialist section only.
+ * Namespaced with the `ispec-` prefix so these Tailwind v4 theme keys never
+ * collide with the Organization Admin tokens (app/globals.css) or the
+ * Innovator tokens (app/innovator/theme.css). This file is @import-ed from
+ * app/globals.css so Tailwind's single build sees these @theme keys and
+ * generates the ispec-* utility classes used across app/innovation-specialist
+ * and components/innovation-specialist.
+ *
+ * Ported as-is from the original Repository 3 tailwind.config.ts
+ * (`brand` colors, `boxShadow.card`) — values are unchanged, only renamed.
+ */
+@theme {
+  --color-ispec-brand-50: #f2f7f4;
+  --color-ispec-brand-100: #dfece4;
+  --color-ispec-brand-600: #246b4a;
+  --color-ispec-brand-700: #19563a;
+  --color-ispec-brand-800: #16452f;
+  --color-ispec-brand-900: #123a29;
+
+  --shadow-ispec-card: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+/*
+ * Non-Tailwind reset styles from the original Repository 3 globals.css.
+ * Originally applied globally via `html`/`body`/`*` selectors — scoped here
+ * under .ispec-scope (applied by app/innovation-specialist/layout.tsx) so
+ * they only affect this section and never leak into Org Admin or Innovator.
+ */
+.ispec-scope {
+  color-scheme: light;
+  background: #f7f8f8;
+  color: #17201b;
+  font-family: "Tajawal", Tahoma, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+.ispec-scope * {
+  box-sizing: border-box;
+}
+.ispec-scope button,
+.ispec-scope input,
+.ispec-scope select,
+.ispec-scope textarea {
+  font: inherit;
+}
+.ispec-scope :focus-visible {
+  outline: 2px solid #246b4a;
+  outline-offset: 2px;
+}

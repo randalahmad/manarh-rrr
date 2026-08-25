@@ -1,0 +1,92 @@
+/*
+ * Design tokens for the Innovator section only.
+ * Ported as-is from the original standalone app's src/index.css, renamed
+ * with the `inv-` prefix (values unchanged) so these Tailwind v4 theme keys
+ * never collide with the Organization Admin tokens (app/globals.css) or the
+ * Innovation Specialist tokens (app/innovation-specialist/theme.css) —
+ * several original names (font-display, font-body, canvas, surface,
+ * radius-card, radius-control) exactly collided with Repository 1's own
+ * token names. This file is @import-ed from app/globals.css so Tailwind's
+ * single build sees these @theme keys and generates the inv-* utility
+ * classes used across components/innovator-src and app/innovator.
+ */
+@theme {
+  --font-inv-display: "Tajawal", "IBM Plex Sans Arabic", sans-serif;
+  --font-inv-body: "IBM Plex Sans Arabic", "Tajawal", sans-serif;
+
+  /* Brand */
+  --color-inv-brand-950: #08211e;
+  --color-inv-brand-900: #0e3b36;
+  --color-inv-brand-800: #145951;
+  --color-inv-brand-700: #1c7267;
+  --color-inv-brand-600: #268a7c;
+  --color-inv-brand-500: #3aa393;
+  --color-inv-brand-100: #e2efec;
+  --color-inv-brand-50: #f2f8f6;
+
+  /* Beacon accent (amber) — sparing use only */
+  --color-inv-beacon-700: #96700f;
+  --color-inv-beacon-600: #b8860b;
+  --color-inv-beacon-500: #d4a017;
+  --color-inv-beacon-100: #faf1d8;
+  --color-inv-beacon-50: #fdf8ec;
+
+  /* Neutrals (warm-cool balance, not stark black/white) */
+  --color-inv-ink-950: #16201d;
+  --color-inv-ink-900: #1a2421;
+  --color-inv-ink-700: #3d4744;
+  --color-inv-ink-500: #5f6b67;
+  --color-inv-ink-300: #647169;
+  --color-inv-ink-200: #cdd3d0;
+  --color-inv-ink-100: #e4e4e1;
+  --color-inv-ink-50: #f6f7f6;
+  --color-inv-surface: #ffffff;
+  --color-inv-canvas: #fafaf8;
+
+  /* Status */
+  --color-inv-status-success-fg: #1e6b46;
+  --color-inv-status-success-bg: #e6f3ec;
+  --color-inv-status-warning-fg: #96700f;
+  --color-inv-status-warning-bg: #faf1d8;
+  --color-inv-status-danger-fg: #a5322a;
+  --color-inv-status-danger-bg: #fbeae8;
+  --color-inv-status-info-fg: #2e6e9e;
+  --color-inv-status-info-bg: #e8f1f8;
+  --color-inv-status-neutral-fg: #5f6b67;
+  --color-inv-status-neutral-bg: #eef0ef;
+
+  --radius-inv-card: 1rem;
+  --radius-inv-control: 0.5rem;
+}
+
+/*
+ * Non-Tailwind reset styles from the original src/index.css, scoped under
+ * .inv-scope (applied by app/innovator/layout.tsx) instead of the original
+ * global html/body/#root/* selectors, so they only affect this section.
+ */
+.inv-scope {
+  min-height: 100vh;
+  font-family: var(--font-inv-body);
+  background-color: var(--color-inv-canvas);
+  color: var(--color-inv-ink-900);
+  -webkit-font-smoothing: antialiased;
+}
+.inv-scope h1,
+.inv-scope h2,
+.inv-scope h3,
+.inv-scope h4 {
+  font-family: var(--font-inv-display);
+}
+.inv-scope :focus-visible {
+  outline: 2px solid var(--color-inv-brand-700);
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+.inv-scope ::selection {
+  background-color: var(--color-inv-brand-100);
+  color: var(--color-inv-brand-900);
+}
+.inv-scope * {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-inv-ink-200) transparent;
+}

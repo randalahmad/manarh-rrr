@@ -1,0 +1,4 @@
+"use client";
+import Link from "next/link";
+import { Bell, Menu } from "lucide-react";
+export function Topbar({onMenu}:{onMenu:()=>void}){return <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-slate-200 bg-white/95 px-4 backdrop-blur sm:px-6"><button type="button" onClick={onMenu} aria-label="فتح القائمة" className="rounded-lg p-2 text-slate-600 hover:bg-slate-100 lg:hidden"><Menu className="h-5 w-5"/></button><p className="hidden text-sm font-semibold text-slate-700 lg:block">مساحة عمل مسؤول الابتكار</p><Link href="/innovation-specialist/notifications" aria-label="الإشعارات" className="relative rounded-lg p-2 text-slate-600 hover:bg-slate-100"><Bell className="h-5 w-5"/><span aria-hidden="true" className="absolute left-1 top-1 h-2 w-2 rounded-full bg-amber-500 ring-2 ring-white"/></Link></header>}

@@ -1,0 +1,130 @@
+@import "tailwindcss";
+
+/*
+ * Section-scoped design tokens for the other two merged interfaces.
+ * Imported here (rather than only via JS) so Tailwind's single build graph
+ * picks up their @theme keys and generates the namespaced utility classes.
+ * Each section's own tokens/colors are otherwise untouched from their
+ * original repositories — see the merge plan (manarah-merge-plan.md).
+ */
+@import "./innovation-specialist/theme.css";
+@import "./innovator/theme.css";
+
+@theme {
+  --color-ink: #10231f;
+  --color-ink-soft: #3c4d49;
+  --color-canvas: #f6f4ee;
+  --color-surface: #ffffff;
+  --color-surface-sunken: #f0eee6;
+  --color-border: #e3e0d4;
+  --color-border-soft: #ece9de;
+
+  --color-primary: #0e3b36;
+  --color-primary-dark: #0a2b27;
+  --color-primary-light: #175951;
+  --color-primary-soft: #e6eeec;
+
+  --color-beacon: #e3a639;
+  --color-beacon-dark: #c98a1f;
+  --color-beacon-soft: #faecd2;
+
+  --color-success: #1f7a5c;
+  --color-success-soft: #e2f2ea;
+  --color-warning: #b8791a;
+  --color-warning-soft: #fbeeda;
+  --color-danger: #b23a3a;
+  --color-danger-soft: #f8e6e6;
+  --color-info: #2c6e9e;
+  --color-info-soft: #e5eff6;
+  --color-neutral: #6b7280;
+  --color-neutral-soft: #eceef0;
+
+  --font-display: "Noto Kufi Arabic", "Segoe UI", "Tahoma", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans Arabic", "Segoe UI", "Tahoma", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", "Courier New", monospace;
+
+  --radius-card: 14px;
+  --radius-control: 10px;
+
+  --shadow-card: 0 1px 2px rgba(16, 35, 31, 0.04), 0 8px 24px -12px rgba(16, 35, 31, 0.12);
+  --shadow-popover: 0 12px 32px -8px rgba(16, 35, 31, 0.22);
+}
+
+html {
+  direction: rtl;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-feature-settings: "tnum" 1;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-mono-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+::selection {
+  background: var(--color-beacon-soft);
+  color: var(--color-primary-dark);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d3cfc0;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #bdb8a4;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-beacon);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes beacon-sweep {
+  0% { opacity: 0.35; }
+  50% { opacity: 1; }
+  100% { opacity: 0.35; }
+}
+.beacon-pulse {
+  animation: beacon-sweep 2.6s ease-in-out infinite;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(0.97) translateY(6px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}

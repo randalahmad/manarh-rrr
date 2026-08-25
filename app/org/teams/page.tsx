@@ -1,0 +1,4 @@
+"use client";
+import { useAppData } from "@/lib/store";
+import { PageHeader, Card } from "@/components/ui/layout-bits";
+export default function TeamsPage(){const d=useAppData();return <div><PageHeader title="الفرق" description="فرق الابتكار والمشاريع، المدير والأعضاء والعضويات التشغيلية."/><div className="grid gap-4 md:grid-cols-2">{d.teams.map(t=><Card key={t.id}><h3 className="font-bold">{t.name}</h3><p className="mt-1 text-sm text-[var(--color-ink-soft)]">{t.description}</p><div className="mt-3 text-sm">المدير: {d.users.find(u=>u.id===t.managerId)?.fullName??"—"}</div><div className="mt-3 flex flex-wrap gap-2">{t.memberIds.map(id=><span key={id} className="rounded-full bg-[var(--color-surface-sunken)] px-3 py-1 text-xs">{d.users.find(u=>u.id===id)?.fullName}</span>)}</div></Card>)}</div></div>}

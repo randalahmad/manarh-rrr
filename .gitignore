@@ -1,0 +1,14 @@
+node_modules/
+.next/
+out/
+build/
+next-env.d.ts
+*.tsbuildinfo
+npm-debug.log*
+.DS_Store
+
+# Local environment files — never commit real credentials.
+# .env.example is intentionally NOT matched by these patterns.
+.env
+.env.local
+.env.*.local
