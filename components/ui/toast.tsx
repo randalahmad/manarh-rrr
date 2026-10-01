@@ -44,7 +44,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             key={t.id}
             role="status"
             className={cn(
-              "flex items-start gap-3 rounded-xl border bg-white p-4 shadow-[var(--shadow-popover)] animate-[toast-in_0.25s_ease]",
+              "flex items-start gap-3 rounded-xl border bg-[var(--color-surface)] p-4 shadow-[var(--shadow-popover)] animate-[toast-in_0.25s_ease]",
               t.tone === "success" && "border-[var(--color-success)]/25",
               t.tone === "danger" && "border-[var(--color-danger)]/25",
               t.tone === "info" && "border-[var(--color-info)]/25"

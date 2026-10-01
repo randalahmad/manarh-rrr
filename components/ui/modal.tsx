@@ -43,7 +43,7 @@ export function Modal({
         aria-modal="true"
         aria-labelledby="modal-title"
         className={cn(
-          "relative z-10 max-h-[90vh] w-full overflow-y-auto rounded-2xl bg-white shadow-[var(--shadow-popover)] animate-[modal-in_0.18s_ease]",
+          "relative z-10 max-h-[90vh] w-full overflow-y-auto rounded-2xl bg-[var(--color-surface)] shadow-[var(--shadow-popover)] animate-[modal-in_0.18s_ease]",
           size === "sm" && "max-w-sm",
           size === "md" && "max-w-lg",
           size === "lg" && "max-w-2xl"
@@ -96,7 +96,7 @@ export function ConfirmDialog({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-[var(--color-ink)]/40" onClick={onClose} aria-hidden />
-      <div className="relative z-10 w-full max-w-sm rounded-2xl bg-white p-6 shadow-[var(--shadow-popover)] animate-[modal-in_0.18s_ease]">
+      <div className="relative z-10 w-full max-w-sm rounded-2xl bg-[var(--color-surface)] p-6 shadow-[var(--shadow-popover)] animate-[modal-in_0.18s_ease]">
         <div
           className={cn(
             "mb-4 flex h-11 w-11 items-center justify-center rounded-full",

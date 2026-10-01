@@ -36,7 +36,7 @@ export function LifecyclePath({
                       !isTerminalOffPath &&
                       "border-[var(--color-beacon)] bg-[var(--color-beacon-soft)] text-[var(--color-beacon-dark)] beacon-pulse",
                     isCurrent && isTerminalOffPath && "border-[var(--color-danger)] bg-[var(--color-danger-soft)] text-[var(--color-danger)]",
-                    !isDone && !isCurrent && "border-[var(--color-border)] bg-white text-[var(--color-ink-soft)]/50"
+                    !isDone && !isCurrent && "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-ink-soft)]/50"
                   )}
                 >
                   {isDone ? <Check size={15} /> : <span className="font-mono-num text-xs">{i + 1}</span>}

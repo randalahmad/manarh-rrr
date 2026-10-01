@@ -41,7 +41,7 @@ const filterOptions: Array<{ key: FilterKey; label: string }> = [
 ];
 
 const pageSize = 5;
-const selectClass = "h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-700";
+const selectClass = "h-10 rounded-lg border border-ispec-border bg-ispec-surface px-3 text-sm text-ispec-ink-soft";
 
 function daysSince(iso: string): number {
   return Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000);
@@ -151,7 +151,7 @@ export function IdeasClient({ initialFilter }: { initialFilter: string }) {
     return (
       <div className="mx-auto max-w-[1600px]">
         <PageHeader title="الأفكار" description="مراجعة الأفكار المؤهلة للفرز والمتابعة داخل الجهة." />
-        <div className="mt-6 flex min-h-72 items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white text-sm text-slate-500">جارٍ تحميل الأفكار...</div>
+        <div className="mt-6 flex min-h-72 items-center justify-center rounded-xl border border-dashed border-ispec-border bg-ispec-surface text-sm text-ispec-ink-soft">جارٍ تحميل الأفكار...</div>
       </div>
     );
   }
@@ -184,13 +184,13 @@ export function IdeasClient({ initialFilter }: { initialFilter: string }) {
           <button
             key={item.status}
             onClick={() => setActiveFilter(item.status)}
-            className={`rounded-xl border bg-white p-4 text-right shadow-ispec-card transition-colors ${activeFilter === item.status ? "border-ispec-brand-600 ring-1 ring-ispec-brand-600" : "border-slate-200 hover:border-ispec-brand-100"}`}
+            className={`rounded-xl border bg-ispec-surface p-4 text-right shadow-ispec-card transition-colors ${activeFilter === item.status ? "border-ispec-brand-600 ring-1 ring-ispec-brand-600" : "border-ispec-border-soft hover:border-ispec-brand-100"}`}
           >
             <span className="flex items-center justify-between gap-2">
-              <span className="text-xs font-medium text-slate-500">{item.label}</span>
+              <span className="text-xs font-medium text-ispec-ink-soft">{item.label}</span>
               <ListChecks className="h-4 w-4 text-ispec-brand-700" />
             </span>
-            <span className="mt-3 block text-2xl font-bold text-slate-900">{item.count}</span>
+            <span className="mt-3 block text-2xl font-bold text-ispec-ink">{item.count}</span>
           </button>
         ))}
       </section>
@@ -215,14 +215,14 @@ export function IdeasClient({ initialFilter }: { initialFilter: string }) {
         </div>
 
         <Filters>
-          <div className="mt-4 flex flex-wrap gap-2 border-t border-slate-100 pt-4">
+          <div className="mt-4 flex flex-wrap gap-2 border-t border-ispec-surface-sunken pt-4">
             {filterOptions.map((option) => (
               <Button key={option.key} type="button" variant={activeFilter === option.key ? "primary" : "secondary"} className="min-h-9 px-3 text-xs" onClick={() => setActiveFilter(option.key)}>
                 {option.label}
               </Button>
             ))}
             {hasFilters && (
-              <Button type="button" variant="ghost" className="min-h-9 px-3 text-xs text-red-600" onClick={clearFilters}>
+              <Button type="button" variant="ghost" className="min-h-9 px-3 text-xs text-ispec-danger" onClick={clearFilters}>
                 <FilterX className="h-4 w-4" />
                 مسح عوامل التصفية
               </Button>
@@ -232,8 +232,8 @@ export function IdeasClient({ initialFilter }: { initialFilter: string }) {
       </Card>
 
       <div className="mt-5 flex items-center justify-between gap-3">
-        <p className="text-sm text-slate-500">
-          عرض <span className="font-semibold text-slate-900">{filteredIdeas.length}</span> من أصل {ideas.length} فكرة مؤهلة للمراجعة
+        <p className="text-sm text-ispec-ink-soft">
+          عرض <span className="font-semibold text-ispec-ink">{filteredIdeas.length}</span> من أصل {ideas.length} فكرة مؤهلة للمراجعة
         </p>
       </div>
 
@@ -246,18 +246,18 @@ export function IdeasClient({ initialFilter }: { initialFilter: string }) {
                 tabIndex={0}
                 onClick={() => openIdea(idea.id)}
                 onKeyDown={(event) => { if (event.key === "Enter") openIdea(idea.id); }}
-                className="cursor-pointer border-t border-slate-100 transition-colors hover:bg-slate-50 focus:bg-ispec-brand-50/50 focus:outline-none"
+                className="cursor-pointer border-t border-ispec-surface-sunken transition-colors hover:bg-ispec-surface-sunken focus:bg-ispec-brand-50/50 focus:outline-none"
               >
                 <td className="min-w-64 px-4 py-4">
-                  <span className="font-semibold text-slate-900">{idea.title}</span>
-                  <span className="mt-1 block text-xs text-slate-400">{idea.id}</span>
+                  <span className="font-semibold text-ispec-ink">{idea.title}</span>
+                  <span className="mt-1 block text-xs text-ispec-ink-soft">{idea.id}</span>
                 </td>
-                <td className="whitespace-nowrap px-4 py-4 text-slate-700">{innovatorName(idea.submitterId)}</td>
-                <td className="whitespace-nowrap px-4 py-4 text-slate-600">{SUBMITTER_TYPE_LABELS[idea.submitterType]}</td>
-                <td className="whitespace-nowrap px-4 py-4 text-slate-600">{categoryName(idea.categoryId)}</td>
+                <td className="whitespace-nowrap px-4 py-4 text-ispec-ink-soft">{innovatorName(idea.submitterId)}</td>
+                <td className="whitespace-nowrap px-4 py-4 text-ispec-ink-soft">{SUBMITTER_TYPE_LABELS[idea.submitterType]}</td>
+                <td className="whitespace-nowrap px-4 py-4 text-ispec-ink-soft">{categoryName(idea.categoryId)}</td>
                 <td className="whitespace-nowrap px-4 py-4"><StatusBadge tone={IDEA_STATUS_TONE[idea.status]}>{IDEA_STATUS_LABELS[idea.status]}</StatusBadge></td>
-                <td className="whitespace-nowrap px-4 py-4 text-slate-600">{formatDate(idea.submittedAt)}</td>
-                <td className="whitespace-nowrap px-4 py-4 text-slate-600">{formatDate(idea.updatedAt)}</td>
+                <td className="whitespace-nowrap px-4 py-4 text-ispec-ink-soft">{formatDate(idea.submittedAt)}</td>
+                <td className="whitespace-nowrap px-4 py-4 text-ispec-ink-soft">{formatDate(idea.updatedAt)}</td>
                 <td className="whitespace-nowrap px-4 py-4">
                   <Button type="button" className="min-h-9 px-3 text-xs" onClick={(event) => { event.stopPropagation(); openIdea(idea.id, actionTab(idea.status)); }}>
                     {actionLabel(idea.status)}
@@ -267,10 +267,10 @@ export function IdeasClient({ initialFilter }: { initialFilter: string }) {
             ))}
           </DataTable>
         ) : (
-          <div className="flex min-h-72 flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white p-8 text-center">
-            <span className="grid h-12 w-12 place-items-center rounded-xl bg-slate-100 text-slate-500"><SearchX className="h-6 w-6" /></span>
-            <h2 className="mt-4 font-semibold text-slate-900">لا توجد أفكار مطابقة</h2>
-            <p className="mt-1 text-sm text-slate-500">جرّب تعديل البحث أو مسح عوامل التصفية الحالية.</p>
+          <div className="flex min-h-72 flex-col items-center justify-center rounded-xl border border-dashed border-ispec-border bg-ispec-surface p-8 text-center">
+            <span className="grid h-12 w-12 place-items-center rounded-xl bg-ispec-surface-sunken text-ispec-ink-soft"><SearchX className="h-6 w-6" /></span>
+            <h2 className="mt-4 font-semibold text-ispec-ink">لا توجد أفكار مطابقة</h2>
+            <p className="mt-1 text-sm text-ispec-ink-soft">جرّب تعديل البحث أو مسح عوامل التصفية الحالية.</p>
             <Button type="button" variant="secondary" className="mt-5" onClick={clearFilters}>مسح عوامل التصفية</Button>
           </div>
         )}
@@ -278,7 +278,7 @@ export function IdeasClient({ initialFilter }: { initialFilter: string }) {
 
       {filteredIdeas.length > 0 && (
         <nav aria-label="التنقل بين الصفحات" className="mt-5 flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm text-slate-500">الصفحة {page} من {pageCount}</p>
+          <p className="text-sm text-ispec-ink-soft">الصفحة {page} من {pageCount}</p>
           <div className="flex items-center gap-2">
             <Button type="button" variant="secondary" className="min-h-9 px-3" disabled={page === 1} onClick={() => setPage((current) => current - 1)}>
               <ChevronRight className="h-4 w-4" />السابق

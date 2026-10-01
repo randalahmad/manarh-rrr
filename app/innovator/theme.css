@@ -11,8 +11,8 @@
  * classes used across components/innovator-src and app/innovator.
  */
 @theme {
-  --font-inv-display: "Tajawal", "IBM Plex Sans Arabic", sans-serif;
-  --font-inv-body: "IBM Plex Sans Arabic", "Tajawal", sans-serif;
+  --font-inv-display: "Cairo", "IBM Plex Sans Arabic", sans-serif;
+  --font-inv-body: "IBM Plex Sans Arabic", "Cairo", sans-serif;
 
   /* Brand */
   --color-inv-brand-950: #08211e;
@@ -36,6 +36,12 @@
   --color-inv-ink-900: #1a2421;
   --color-inv-ink-700: #3d4744;
   --color-inv-ink-500: #5f6b67;
+  /* Was referenced by 9 real components (text-inv-ink-400) but never
+     defined, so Tailwind generated no utility for it at all — those
+     elements silently rendered with no color class applied. Added here
+     (interpolated between -300 and -500, which already sit almost on top
+     of each other) rather than left broken. */
+  --color-inv-ink-400: #626e6a;
   --color-inv-ink-300: #647169;
   --color-inv-ink-200: #cdd3d0;
   --color-inv-ink-100: #e4e4e1;
@@ -57,6 +63,62 @@
 
   --radius-inv-card: 1rem;
   --radius-inv-control: 0.5rem;
+}
+
+/*
+ * Dark mode — same [data-theme="dark"] switch driven by next-themes'
+ * ThemeProvider in app/layout.tsx (see app/globals.css for Org
+ * Admin/Super Admin, app/innovation-specialist/theme.css for the
+ * specialist interface). Numbered-scale tokens (unlike the other two
+ * interfaces' semantic-named tokens) are remapped shade-by-shade using the
+ * real usage audit (grep across components/innovator-src + app/innovator)
+ * so each shade keeps its light-mode ROLE — ink-900 stays "primary text,"
+ * ink-50 stays "subtle background tint," etc. — just inverted for a dark
+ * canvas. -ink-950 is intentionally left out: its only two real uses
+ * (Modal/Drawer backdrop scrims) should stay a dark overlay in both
+ * themes, not invert to white.
+ */
+[data-theme="dark"] {
+  --color-inv-brand-900: #103a33;
+  --color-inv-brand-800: #175146;
+  --color-inv-brand-700: #2e9c82;
+  --color-inv-brand-600: #3aa393;
+  --color-inv-brand-500: #4dbfa3;
+  --color-inv-brand-100: #17251f;
+  --color-inv-brand-50: #131d19;
+
+  --color-inv-beacon-700: #f0c25b;
+  --color-inv-beacon-600: #d9a73f;
+  --color-inv-beacon-500: #d9a73f;
+  --color-inv-beacon-100: #2b2418;
+  --color-inv-beacon-50: #221d15;
+
+  --color-inv-ink-900: #eef1ef;
+  --color-inv-ink-700: #c7cec9;
+  --color-inv-ink-500: #98a29d;
+  --color-inv-ink-400: #7e8985;
+  /* #717c78 measured 4.15:1 on canvas — just under WCAG AA (4.5:1) for
+     normal text. Nudged lighter to clear it while staying dimmer than
+     -400, same as the light-mode pair (verified via relative-luminance
+     contrast calculation, not eyeballed — no browser available here to
+     screenshot). */
+  --color-inv-ink-300: #7c8783;
+  --color-inv-ink-200: #333c37;
+  --color-inv-ink-100: #262e29;
+  --color-inv-ink-50: #1f2622;
+  --color-inv-surface: #1c211d;
+  --color-inv-canvas: #141815;
+
+  --color-inv-status-success-fg: #4ade9c;
+  --color-inv-status-success-bg: #16261e;
+  --color-inv-status-warning-fg: #e8b04b;
+  --color-inv-status-warning-bg: #2b2418;
+  --color-inv-status-danger-fg: #f87171;
+  --color-inv-status-danger-bg: #2b1c1c;
+  --color-inv-status-info-fg: #7fb2f0;
+  --color-inv-status-info-bg: #1b2430;
+  --color-inv-status-neutral-fg: #9aa39d;
+  --color-inv-status-neutral-bg: #232925;
 }
 
 /*

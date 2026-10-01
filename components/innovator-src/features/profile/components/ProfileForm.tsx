@@ -57,7 +57,7 @@ export function ProfileForm({ user, onSubmit, isSaving }: ProfileFormProps) {
         disabled
         hint="لا يمكن تغيير البريد الإلكتروني حاليًا."
       />
-      <Input label="الاسم الكامل" required error={errors.fullName?.message} {...register('fullName')} />
+      <Input label="الاسم الكامل" value={user.fullName} disabled hint="لا يمكن تغيير الاسم حاليًا." />
       <Input label="رقم الجوال" type="tel" error={errors.phone?.message} {...register('phone')} />
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">

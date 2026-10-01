@@ -162,6 +162,12 @@ export interface SpecialistProjectDetail {
   /** The real, granular status — needed to drive the real workflow-transition buttons (never the bucketed value). */
   statusValue: RealProjectStatus;
   previousActiveStatus: RealProjectStatus | null;
+  /** Real columns the overview tab needs but `ProjectListItem` never carries (see its own field-by-field note). */
+  description: string;
+  budget?: number;
+  startDate: string;
+  expectedCompletionDate: string;
+  actualCompletionDate?: string;
 }
 
 export async function fetchSpecialistProject(projectId: string): Promise<SpecialistProjectDetail> {
@@ -176,6 +182,11 @@ export async function fetchSpecialistProject(projectId: string): Promise<Special
     item: await toProjectListItem(row, ideaTitle, managerName),
     statusValue: row.status,
     previousActiveStatus: row.previous_active_status,
+    description: row.description,
+    budget: row.budget ?? undefined,
+    startDate: row.start_date,
+    expectedCompletionDate: row.expected_completion_date,
+    actualCompletionDate: row.actual_completion_date ?? undefined,
   };
 }
 

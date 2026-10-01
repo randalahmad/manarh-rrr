@@ -1,17 +1,19 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Ban, CheckCircle2, Save, Lightbulb, FolderKanban } from "lucide-react";
-import { useAppData } from "@/lib/store";
 import { useToast } from "@/components/ui/toast";
-import { PageHeader, Card, Avatar, EmptyState } from "@/components/ui/layout-bits";
+import { PageHeader, Card, Avatar, EmptyState, LoadingState } from "@/components/ui/layout-bits";
 import { Button } from "@/components/ui/button";
 import { FormField, Input, Select } from "@/components/ui/form";
 import { Badge, StatusBadge } from "@/components/ui/badge";
 import { Tabs } from "@/components/ui/tabs";
 import { ConfirmDialog } from "@/components/ui/modal";
-import type { UserRole } from "@/lib/types";
+import type { User, UserRole, Idea, Project } from "@/lib/types";
+import { getCurrentOrgSession, fetchOrgIdeas } from "@/lib/client/org-ideas";
+import { fetchOrgProjects } from "@/lib/client/org-projects";
+import { fetchOrgMember, updateOrgMember, setOrgMemberStatus } from "@/lib/client/org-users";
 import {
   ACCOUNT_STATUS_LABELS,
   ACCOUNT_STATUS_TONE,
@@ -26,31 +28,124 @@ import {
 
 const ASSIGNABLE_ROLES: UserRole[] = ["ORG_ADMIN", "INNOVATION_SPECIALIST", "INTERNAL_INNOVATOR"];
 
+// Real member profile (lib/client/org-users.ts) replacing the previous
+// lib/store.tsx mock. "Projects" is approximated as projects this user
+// owns (real owner_id) — the mock's broader "project member" concept has
+// no wired real list function yet, documented rather than fabricated.
 export default function UserDetailPage() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
-  const { users, ideas, projects, projectMembers, updateUser, setUserStatus } = useAppData();
   const { show } = useToast();
 
-  const user = users.find((u) => u.id === id);
+  const [user, setUser] = useState<User | null>(null);
+  const [organizationId, setOrganizationId] = useState<string | null>(null);
+  const [ideas, setIdeas] = useState<Idea[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loadState, setLoadState] = useState<"loading" | "error" | "notfound" | "ready">("loading");
+  const [reloadKey, setReloadKey] = useState(0);
   const [tab, setTab] = useState("overview");
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  const [jobTitle, setJobTitle] = useState(user?.jobTitle ?? "");
-  const [department, setDepartment] = useState(user?.department ?? "");
-  const [role, setRole] = useState<UserRole>((user?.role as UserRole) ?? "INTERNAL_INNOVATOR");
+  const [department, setDepartment] = useState("");
+  const [role, setRole] = useState<UserRole>("INTERNAL_INNOVATOR");
+
+  const load = useCallback(async () => {
+    const { organizationId: orgId } = await getCurrentOrgSession();
+    const [memberData, ideasData, projectsData] = await Promise.all([
+      fetchOrgMember(orgId, id),
+      fetchOrgIdeas(orgId),
+      fetchOrgProjects(orgId),
+    ]);
+    return { orgId, memberData, ideasData, projectsData };
+  }, [id]);
+
+  useEffect(() => {
+    let cancelled = false;
+    load()
+      .then(({ orgId, memberData, ideasData, projectsData }) => {
+        if (cancelled) return;
+        setOrganizationId(orgId);
+        setUser(memberData);
+        setDepartment(memberData.department ?? "");
+        setRole(memberData.role);
+        setIdeas(ideasData);
+        setProjects(projectsData);
+        setLoadState("ready");
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        setLoadState(err?.message?.includes("Membership") ? "notfound" : "error");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [load, reloadKey]);
 
   const userIdeas = useMemo(() => ideas.filter((i) => i.submitterId === id), [ideas, id]);
-  const userProjectIds = useMemo(() => projectMembers.filter((pm) => pm.userId === id).map((pm) => pm.projectId), [projectMembers, id]);
-  const userProjects = useMemo(() => projects.filter((p) => userProjectIds.includes(p.id)), [projects, userProjectIds]);
+  const userProjects = useMemo(() => projects.filter((p) => p.ownerId === id), [projects, id]);
 
-  if (!user) {
+  const saveEdits = async () => {
+    if (!user || !organizationId) return;
+    setSaving(true);
+    try {
+      const updated = await updateOrgMember(organizationId, user.id, { department, role });
+      setUser(updated);
+      show("تم حفظ تعديلات الحساب");
+    } catch (err) {
+      show(err instanceof Error ? err.message : "تعذر حفظ التعديلات", "danger");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const toggleDisable = async () => {
+    if (!user || !organizationId) return;
+    setSaving(true);
+    try {
+      const nextStatus = user.status === "DISABLED" ? "ACTIVE" : "DISABLED";
+      const updated = await setOrgMemberStatus(organizationId, user.id, nextStatus);
+      setUser(updated);
+      show(nextStatus === "ACTIVE" ? "تم تفعيل الحساب" : "تم تعطيل الحساب", nextStatus === "ACTIVE" ? "success" : "danger");
+    } catch (err) {
+      show(err instanceof Error ? err.message : "تعذر تغيير حالة الحساب", "danger");
+    } finally {
+      setSaving(false);
+      setConfirmOpen(false);
+    }
+  };
+
+  if (loadState === "loading") return <LoadingState label="جارٍ تحميل بيانات المستخدم..." />;
+  if (loadState === "notfound" || (!user && loadState === "ready")) {
     return (
       <EmptyState
         title="المستخدم غير موجود"
         description="ربما تم حذف الحساب أو أن الرابط غير صحيح."
-        action={<Button variant="outline" onClick={() => router.push("/org/users")}>العودة لقائمة المستخدمين</Button>}
+        action={
+          <Button variant="outline" onClick={() => router.push("/org/users")}>
+            العودة لقائمة المستخدمين
+          </Button>
+        }
+      />
+    );
+  }
+  if (loadState === "error" || !user) {
+    return (
+      <EmptyState
+        title="تعذر تحميل بيانات المستخدم"
+        description="حدث خطأ أثناء الاتصال بالخادم."
+        action={
+          <Button
+            variant="outline"
+            onClick={() => {
+              setLoadState("loading");
+              setReloadKey((k) => k + 1);
+            }}
+          >
+            إعادة المحاولة
+          </Button>
+        }
       />
     );
   }
@@ -68,14 +163,7 @@ export default function UserDetailPage() {
               تعطيل الحساب
             </Button>
           ) : (
-            <Button
-              variant="outline"
-              icon={<CheckCircle2 size={16} />}
-              onClick={() => {
-                setUserStatus(user.id, "ACTIVE", "User Enabled");
-                show("تم تفعيل الحساب");
-              }}
-            >
+            <Button variant="outline" icon={<CheckCircle2 size={16} />} onClick={toggleDisable}>
               إعادة تفعيل الحساب
             </Button>
           )
@@ -84,11 +172,10 @@ export default function UserDetailPage() {
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
         <Card className="flex flex-col items-center gap-3 text-center lg:col-span-1">
-          <Avatar name={user.fullName} size={72} />
+          <Avatar name={user.fullName} size={72} imgUrl={user.avatarUrl} />
           <div>
             <p className="font-display text-lg font-bold text-[var(--color-ink)]">{user.fullName}</p>
-            <p className="text-sm text-[var(--color-ink-soft)]">{user.jobTitle}</p>
-            <p className="mt-0.5 text-xs text-[var(--color-ink-soft)]">{user.department}</p>
+            <p className="mt-0.5 text-xs text-[var(--color-ink-soft)]">{user.department ?? "—"}</p>
           </div>
           <div className="flex gap-2">
             <Badge tone="primary">{ROLE_LABELS[user.role]}</Badge>
@@ -159,32 +246,23 @@ export default function UserDetailPage() {
               {tab === "edit" && (
                 <div className="flex flex-col gap-4">
                   <div className="grid grid-cols-2 gap-3">
-                    <FormField label="المسمى الوظيفي">
-                      <Input value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} />
-                    </FormField>
-                    <FormField label="الإدارة">
+                    <FormField label="القسم">
                       <Input value={department} onChange={(e) => setDepartment(e.target.value)} />
                     </FormField>
+                    {canAssignRole && (
+                      <FormField label="الدور" hint="تغيير الدور يُحدّث نطاق صلاحيات المستخدم فورًا.">
+                        <Select value={role} onChange={(e) => setRole(e.target.value as UserRole)}>
+                          {ASSIGNABLE_ROLES.map((r) => (
+                            <option key={r} value={r}>
+                              {ROLE_LABELS[r]}
+                            </option>
+                          ))}
+                        </Select>
+                      </FormField>
+                    )}
                   </div>
-                  {canAssignRole && (
-                    <FormField label="الدور" hint="تغيير الدور يُحدّث نطاق صلاحيات المستخدم فورًا.">
-                      <Select value={role} onChange={(e) => setRole(e.target.value as UserRole)}>
-                        {ASSIGNABLE_ROLES.map((r) => (
-                          <option key={r} value={r}>
-                            {ROLE_LABELS[r]}
-                          </option>
-                        ))}
-                      </Select>
-                    </FormField>
-                  )}
                   <div>
-                    <Button
-                      icon={<Save size={16} />}
-                      onClick={() => {
-                        updateUser(user.id, { jobTitle, department, role });
-                        show("تم حفظ تعديلات الحساب");
-                      }}
-                    >
+                    <Button icon={<Save size={16} />} onClick={saveEdits} loading={saving}>
                       حفظ التعديلات
                     </Button>
                   </div>
@@ -198,11 +276,7 @@ export default function UserDetailPage() {
       <ConfirmDialog
         open={confirmOpen}
         onClose={() => setConfirmOpen(false)}
-        onConfirm={() => {
-          setUserStatus(user.id, "DISABLED", "User Disabled");
-          show("تم تعطيل الحساب", "danger");
-          setConfirmOpen(false);
-        }}
+        onConfirm={toggleDisable}
         title={`تعطيل حساب ${user.fullName}`}
         description="لن يتمكن هذا المستخدم من الدخول إلى المنصة حتى تتم إعادة تفعيل حسابه."
         confirmLabel="تعطيل الحساب"

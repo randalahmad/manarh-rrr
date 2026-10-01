@@ -1,17 +1,9 @@
 import Link from "next/link";
+import { Building2, CheckCircle2, XCircle, ShieldCheck, ArrowLeft } from "lucide-react";
 import { getPlatformStatsAction } from "@/lib/server/actions/platform-oversight";
-import { PageHeader, Card } from "@/components/ui/layout-bits";
+import { PageHeader, Card, StatCard } from "@/components/ui/layout-bits";
 
 export const dynamic = "force-dynamic";
-
-function StatCard({ label, value }: { label: string; value: number | undefined }) {
-  return (
-    <Card>
-      <p className="text-xs text-[var(--color-ink-soft)]">{label}</p>
-      <p className="mt-1 font-display text-2xl font-bold text-[var(--color-ink)]">{value ?? "—"}</p>
-    </Card>
-  );
-}
 
 export default async function SuperAdminDashboardPage() {
   const result = await getPlatformStatsAction();
@@ -29,17 +21,25 @@ export default async function SuperAdminDashboardPage() {
         </Card>
       )}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="إجمالي المؤسسات" value={stats?.organizationCount} />
-        <StatCard label="المؤسسات النشطة" value={stats?.activeOrganizationCount} />
-        <StatCard label="المؤسسات الموقوفة" value={stats?.suspendedOrganizationCount} />
-        <StatCard label="عدد مسؤولي المنصة" value={stats?.platformAdminCount} />
+        <StatCard label="إجمالي المؤسسات" value={stats?.organizationCount ?? "—"} icon={Building2} tone="primary" />
+        <StatCard label="المؤسسات النشطة" value={stats?.activeOrganizationCount ?? "—"} icon={CheckCircle2} tone="success" />
+        <StatCard label="المؤسسات الموقوفة" value={stats?.suspendedOrganizationCount ?? "—"} icon={XCircle} tone="danger" />
+        <StatCard label="عدد مسؤولي المنصة" value={stats?.platformAdminCount ?? "—"} icon={ShieldCheck} tone="beacon" />
       </div>
       <div className="mt-6 flex flex-wrap gap-4">
-        <Link href="/super-admin/organizations" className="text-sm font-medium text-[var(--color-primary)] hover:underline">
-          عرض جميع المؤسسات ←
+        <Link
+          href="/super-admin/organizations"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-primary)] hover:underline"
+        >
+          عرض جميع المؤسسات
+          <ArrowLeft size={14} />
         </Link>
-        <Link href="/super-admin/audit" className="text-sm font-medium text-[var(--color-primary)] hover:underline">
-          عرض سجل النشاط ←
+        <Link
+          href="/super-admin/audit"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-primary)] hover:underline"
+        >
+          عرض سجل النشاط
+          <ArrowLeft size={14} />
         </Link>
       </div>
     </div>

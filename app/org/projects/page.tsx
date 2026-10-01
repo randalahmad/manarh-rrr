@@ -1,28 +1,35 @@
 "use client";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useAppData } from "@/lib/store";
 import { PageHeader, Card, EmptyState, LoadingState } from "@/components/ui/layout-bits";
 import { SearchInput, Select } from "@/components/ui/form";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PROJECT_STATUS_LABELS, PROJECT_STATUS_TONE } from "@/lib/utils";
-import type { Project } from "@/lib/types";
+import type { Project, StrategicGoal, InnovationChallenge, ProjectRisk, KPI } from "@/lib/types";
 import { getCurrentOrgSession, fetchOrgIdea, fetchUserNames } from "@/lib/client/org-ideas";
 import { fetchOrgProjects } from "@/lib/client/org-projects";
+import { fetchOrgStrategicGoals } from "@/lib/client/org-strategic-goals";
+import { fetchOrgChallenges } from "@/lib/client/org-challenges";
+import { fetchOrgRisks } from "@/lib/client/org-risks";
+import { fetchOrgKpis } from "@/lib/client/org-kpis";
 
-// Project Core — Phase 6, Group D. The project list itself is real
-// (lib/client/org-projects.ts). The strategic-goal filter/column and the
-// per-project risk/KPI counts stay reading the mock store (`useAppData()`)
-// — Group F and Group E scope respectively, out of bounds this phase. A
-// real project's id never matches a mock strategic-goal/risk/KPI row, so
-// those columns show "—"/0 for a real project — expected, not a bug,
-// mirroring the precedent already established for out-of-scope idea fields.
+// Project Core — Phase 6, Group D. The project list is real
+// (lib/client/org-projects.ts); risk/KPI counts and the goal/challenge
+// lookups are now real too (built in a later pass: lib/client/org-risks.ts,
+// org-kpis.ts, org-challenges.ts, org-strategic-goals.ts). A real project's
+// `strategicGoalIds` is still always `[]` (no idea/project<->goal join is
+// populated anywhere yet), so the goal column/filter still can't match a
+// real project on that specific field — the challenge fallback below still
+// resolves for real, though.
 export default function ProjectsPage() {
-  const d = useAppData();
   const [projects, setProjects] = useState<Project[]>([]);
   const [ownerNames, setOwnerNames] = useState<Map<string, string>>(new Map());
   const [ideaTitles, setIdeaTitles] = useState<Map<string, string>>(new Map());
+  const [strategicGoals, setStrategicGoals] = useState<StrategicGoal[]>([]);
+  const [challenges, setChallenges] = useState<InnovationChallenge[]>([]);
+  const [risks, setRisks] = useState<ProjectRisk[]>([]);
+  const [kpis, setKpis] = useState<KPI[]>([]);
   const [loadState, setLoadState] = useState<"loading" | "error" | "ready">("loading");
   const [reloadKey, setReloadKey] = useState(0);
   const [search, setSearch] = useState("");
@@ -31,7 +38,13 @@ export default function ProjectsPage() {
 
   const load = useCallback(async () => {
     const { organizationId } = await getCurrentOrgSession();
-    const fetchedProjects = await fetchOrgProjects(organizationId);
+    const [fetchedProjects, goals, challengeRows, riskRows, kpiRows] = await Promise.all([
+      fetchOrgProjects(organizationId),
+      fetchOrgStrategicGoals(organizationId),
+      fetchOrgChallenges(organizationId),
+      fetchOrgRisks(organizationId),
+      fetchOrgKpis(organizationId),
+    ]);
     const uniqueIdeaIds = Array.from(new Set(fetchedProjects.map((p) => p.ideaId)));
     const [names, ideas] = await Promise.all([
       fetchUserNames(fetchedProjects.map((p) => p.ownerId)),
@@ -40,7 +53,7 @@ export default function ProjectsPage() {
     const titles = new Map(
       ideas.filter((i): i is NonNullable<typeof i> => i !== null).map((idea) => [idea.id, idea.title])
     );
-    return { projects: fetchedProjects, names, titles };
+    return { projects: fetchedProjects, names, titles, goals, challengeRows, riskRows, kpiRows };
   }, []);
 
   useEffect(() => {
@@ -51,6 +64,10 @@ export default function ProjectsPage() {
         setProjects(data.projects);
         setOwnerNames(data.names);
         setIdeaTitles(data.titles);
+        setStrategicGoals(data.goals);
+        setChallenges(data.challengeRows);
+        setRisks(data.riskRows);
+        setKpis(data.kpiRows);
         setLoadState("ready");
       })
       .catch(() => {
@@ -104,7 +121,7 @@ export default function ProjectsPage() {
         </Select>
         <Select value={goal} onChange={(e) => setGoal(e.target.value)}>
           <option value="">كل الأهداف</option>
-          {d.strategicGoals.map((g) => (
+          {strategicGoals.map((g) => (
             <option key={g.id} value={g.id}>{g.name}</option>
           ))}
         </Select>
@@ -129,10 +146,10 @@ export default function ProjectsPage() {
                     <td>{ownerNames.get(p.ownerId) ?? "—"}</td>
                     <td>{p.progress}%</td>
                     <td>{ideaTitles.get(p.ideaId) ?? "—"}</td>
-                    <td>{p.strategicGoalIds?.map((id) => d.strategicGoals.find((g) => g.id === id)?.name).filter(Boolean).join("، ") || d.challenges.find((c) => c.id === p.challengeId)?.title || "—"}</td>
+                    <td>{p.strategicGoalIds?.map((id) => strategicGoals.find((g) => g.id === id)?.name).filter(Boolean).join("، ") || challenges.find((c) => c.id === p.challengeId)?.title || "—"}</td>
                     <td>{p.budget ?? 0}</td>
-                    <td>{d.projectRisks.filter((r) => r.projectId === p.id && r.status === "OPEN").length}</td>
-                    <td>{d.kpis.filter((k) => k.projectId === p.id).length}</td>
+                    <td>{risks.filter((r) => r.projectId === p.id && r.status === "OPEN").length}</td>
+                    <td>{kpis.filter((k) => k.projectId === p.id).length}</td>
                   </tr>
                 ))}
               </tbody>

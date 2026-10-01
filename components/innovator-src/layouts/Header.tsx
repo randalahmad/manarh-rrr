@@ -3,6 +3,7 @@ import { Link } from '@innovator/_compat/react-router-shim';
 import { Bell, Menu } from 'lucide-react';
 import { Avatar } from '@innovator/components/ui/Avatar';
 import { Drawer } from '@innovator/components/ui/Drawer';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { SidebarNav } from './SidebarNav';
 import { useAuth } from '@innovator/app/providers/AuthContext';
 import { useNotificationFeed } from '@innovator/features/notifications/hooks/useNotificationFeed';
@@ -32,6 +33,7 @@ export function Header({ title }: HeaderProps) {
         </div>
 
         <div className="flex items-center gap-3">
+          <ThemeToggle className="text-inv-ink-700 hover:bg-inv-ink-50" />
           <Link
             to="/innovator/notifications"
             aria-label={`الإشعارات${unreadCount > 0 ? ` (${unreadCount} غير مقروءة)` : ''}`}

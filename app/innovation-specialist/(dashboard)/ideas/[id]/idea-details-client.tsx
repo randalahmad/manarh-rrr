@@ -40,14 +40,14 @@ import {
  */
 
 const tabs = ["نظرة عامة", "التقييم", "التواصل والاستكمال", "التوصية"];
-const inputClass = "min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-800 disabled:bg-slate-50 disabled:text-slate-500";
+const inputClass = "min-h-11 w-full rounded-lg border border-ispec-border bg-ispec-surface px-3 text-sm text-ispec-ink disabled:bg-ispec-surface-sunken disabled:text-ispec-ink-soft";
 const textareaClass = `${inputClass} min-h-28 py-3 leading-6`;
 
 function FieldBlock({ label, children }: { label: string; children: ReactNode }) {
-  return <div><p className="text-xs font-semibold text-slate-500">{label}</p><div className="mt-2 text-sm leading-7 text-slate-800">{children}</div></div>;
+  return <div><p className="text-xs font-semibold text-ispec-ink-soft">{label}</p><div className="mt-2 text-sm leading-7 text-ispec-ink">{children}</div></div>;
 }
 function SectionTitle({ title, description }: { title: string; description?: string }) {
-  return <div className="mb-5"><h2 className="text-lg font-bold text-slate-900">{title}</h2>{description && <p className="mt-1 text-sm text-slate-500">{description}</p>}</div>;
+  return <div className="mb-5"><h2 className="text-lg font-bold text-ispec-ink">{title}</h2>{description && <p className="mt-1 text-sm text-ispec-ink-soft">{description}</p>}</div>;
 }
 
 const tabByQuery: Record<string, string> = { overview: "نظرة عامة", evaluation: "التقييم", communication: "التواصل والاستكمال", recommendation: "التوصية" };
@@ -220,7 +220,7 @@ export function IdeaDetailsClient({ id, initialTab = "overview" }: { id: string;
   if (loadState === "loading") {
     return (
       <div className="mx-auto max-w-[1500px]">
-        <div className="mt-6 flex min-h-72 items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white text-sm text-slate-500">جارٍ تحميل الفكرة...</div>
+        <div className="mt-6 flex min-h-72 items-center justify-center rounded-xl border border-dashed border-ispec-border bg-ispec-surface text-sm text-ispec-ink-soft">جارٍ تحميل الفكرة...</div>
       </div>
     );
   }
@@ -236,7 +236,13 @@ export function IdeaDetailsClient({ id, initialTab = "overview" }: { id: string;
     );
   }
 
-  const allowed = allowedIdeaTransitions(idea.status);
+  // CONVERTED_TO_PROJECT is excluded here for the same reason as the Org
+  // Admin idea detail page (app/org/ideas/[id]/page.tsx): it requires a real
+  // `projects` row (owner/dates), which only createProjectFromIdeaAction
+  // creates — a bare transitionIdeaStatusAction call here would mark the
+  // idea converted with no project behind it. That real flow lives on the
+  // Org Admin's decisions page, not this interface.
+  const allowed = allowedIdeaTransitions(idea.status).filter((s) => s !== "CONVERTED_TO_PROJECT");
   const canRequestInfo = canTransitionIdea(idea.status, "NEEDS_INFORMATION");
 
   const handleTransition = async (status: IdeaStatus) => {
@@ -270,17 +276,17 @@ export function IdeaDetailsClient({ id, initialTab = "overview" }: { id: string;
   };
 
   return <div className="mx-auto max-w-[1500px]">
-    {success && <div role="status" className="fixed left-5 top-20 z-50 flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800 shadow-ispec-card"><Check className="h-4 w-4"/>{success}</div>}
+    {success && <div role="status" className="fixed left-5 top-20 z-50 flex items-center gap-2 rounded-lg border border-ispec-success-soft bg-ispec-success-soft px-4 py-3 text-sm font-semibold text-ispec-success shadow-ispec-card"><Check className="h-4 w-4"/>{success}</div>}
 
-    <Link href="/innovation-specialist/ideas" className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-ispec-brand-700"><ArrowRight className="h-4 w-4"/>العودة إلى الأفكار</Link>
+    <Link href="/innovation-specialist/ideas" className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-ispec-ink-soft hover:text-ispec-brand-700"><ArrowRight className="h-4 w-4"/>العودة إلى الأفكار</Link>
     <div className="mb-6 flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
       <div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-sm font-semibold text-ispec-brand-700">{idea.id}</span>
           <StatusBadge tone={IDEA_STATUS_TONE[idea.status]}>{IDEA_STATUS_LABELS[idea.status]}</StatusBadge>
         </div>
-        <h1 className="mt-3 text-2xl font-bold leading-9 text-slate-900">{idea.title}</h1>
-        <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-500">
+        <h1 className="mt-3 text-2xl font-bold leading-9 text-ispec-ink">{idea.title}</h1>
+        <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ispec-ink-soft">
           <span className="inline-flex items-center gap-2"><CalendarDays className="h-4 w-4"/>تاريخ التقديم: {formatDate(idea.submittedAt)}</span>
           <span className="inline-flex items-center gap-2"><CalendarDays className="h-4 w-4"/>آخر تحديث: {formatDate(idea.updatedAt)}</span>
         </div>
@@ -300,7 +306,7 @@ export function IdeaDetailsClient({ id, initialTab = "overview" }: { id: string;
     {allowed.length > 0 && (
       <Card className="mb-6">
         <div className="flex flex-wrap items-center gap-2">
-          <b className="ml-2 text-sm text-slate-700">الإجراءات المتاحة حسب Workflow:</b>
+          <b className="ml-2 text-sm text-ispec-ink-soft">الإجراءات المتاحة حسب Workflow:</b>
           {allowed.map((status) => (
             <Button key={status} variant="secondary" className="min-h-9 px-3 text-xs" disabled={transitioningTo !== null} onClick={() => handleTransition(status)}>
               {transitioningTo === status ? "جارٍ التنفيذ..." : IDEA_STATUS_LABELS[status]}
@@ -328,9 +334,9 @@ export function IdeaDetailsClient({ id, initialTab = "overview" }: { id: string;
         <Card>
           <SectionTitle title="المرفقات"/>
           {idea.attachments.length > 0 ? (
-            <div className="grid gap-3 sm:grid-cols-2">{idea.attachments.map((file) => <span key={file.id} className="text-sm text-slate-700">{file.fileName}</span>)}</div>
+            <div className="grid gap-3 sm:grid-cols-2">{idea.attachments.map((file) => <span key={file.id} className="text-sm text-ispec-ink-soft">{file.fileName}</span>)}</div>
           ) : (
-            <p className="text-sm text-slate-500">لا توجد مرفقات على هذه الفكرة.</p>
+            <p className="text-sm text-ispec-ink-soft">لا توجد مرفقات على هذه الفكرة.</p>
           )}
         </Card>
         <Card>
@@ -339,15 +345,15 @@ export function IdeaDetailsClient({ id, initialTab = "overview" }: { id: string;
             {history.map((item, index) => (
               <div key={item.id} className="relative flex gap-4 pb-6 last:pb-0">
                 <span className="relative z-10 mt-1 h-3 w-3 shrink-0 rounded-full bg-ispec-brand-700 ring-4 ring-ispec-brand-50"/>
-                {index < history.length - 1 && <span className="absolute right-[5px] top-4 h-full w-px bg-slate-200"/>}
+                {index < history.length - 1 && <span className="absolute right-[5px] top-4 h-full w-px bg-ispec-border-soft"/>}
                 <div>
                   <p className="text-sm font-semibold">{IDEA_STATUS_LABELS[item.toStatus]}</p>
-                  <p className="mt-1 text-xs text-slate-500">{formatDateTime(item.changedAt)}</p>
-                  {item.note && <p className="mt-1 text-xs text-slate-500">{item.note}</p>}
+                  <p className="mt-1 text-xs text-ispec-ink-soft">{formatDateTime(item.changedAt)}</p>
+                  {item.note && <p className="mt-1 text-xs text-ispec-ink-soft">{item.note}</p>}
                 </div>
               </div>
             ))}
-            {history.length === 0 && <p className="text-sm text-slate-500">لا يوجد سجل حالة بعد.</p>}
+            {history.length === 0 && <p className="text-sm text-ispec-ink-soft">لا يوجد سجل حالة بعد.</p>}
           </div>
         </Card>
       </div>
@@ -355,7 +361,7 @@ export function IdeaDetailsClient({ id, initialTab = "overview" }: { id: string;
         <Card>
           <div className="mb-5 flex items-center gap-3">
             <span className="grid h-11 w-11 place-items-center rounded-full bg-ispec-brand-50 text-ispec-brand-700"><UserRound/></span>
-            <div><h2 className="font-bold">بيانات المبتكر</h2><p className="text-xs text-slate-500">صاحب الفكرة</p></div>
+            <div><h2 className="font-bold">بيانات المبتكر</h2><p className="text-xs text-ispec-ink-soft">صاحب الفكرة</p></div>
           </div>
           <div className="space-y-4">
             <FieldBlock label="اسم المبتكر">{submitterName}</FieldBlock>
@@ -394,12 +400,12 @@ export function IdeaDetailsClient({ id, initialTab = "overview" }: { id: string;
       {myAssignment && !myEvaluation && (
         <Card>
           <SectionTitle title="تقديم التقييم" description="مرتبط بتعيينك كمقيّم لهذه الفكرة، ويُحفظ مباشرة على النظام الفعلي — لا يمكن التعديل بعد التقديم."/>
-          {evaluationError && <p className="mb-4 text-sm text-red-600">{evaluationError}</p>}
+          {evaluationError && <p className="mb-4 text-sm text-ispec-danger">{evaluationError}</p>}
           <div className="grid gap-5 lg:grid-cols-3">
             {evaluationCriteria.map((criterion) => (
               <div key={criterion.key}>
-                <div className="flex items-center justify-between"><h3 className="text-sm font-bold text-slate-800">{criterion.label}</h3><span className="text-sm font-bold text-ispec-brand-700">{evalScores[criterion.key]} / 10</span></div>
-                <p className="mt-1 text-xs text-slate-500">{criterion.helper}</p>
+                <div className="flex items-center justify-between"><h3 className="text-sm font-bold text-ispec-ink">{criterion.label}</h3><span className="text-sm font-bold text-ispec-brand-700">{evalScores[criterion.key]} / 10</span></div>
+                <p className="mt-1 text-xs text-ispec-ink-soft">{criterion.helper}</p>
                 <input
                   type="range"
                   min={0}
@@ -426,7 +432,7 @@ export function IdeaDetailsClient({ id, initialTab = "overview" }: { id: string;
             {assignments.map((a) => {
               const ev = evaluations.find((e) => e.evaluatorId === a.evaluatorId);
               return (
-                <div key={a.id} className="rounded-lg border border-slate-200 p-3 text-sm">
+                <div key={a.id} className="rounded-lg border border-ispec-border-soft p-3 text-sm">
                   <b>{userNames.get(a.evaluatorId) ?? "—"}</b> · {a.status}
                   {ev && <span> · متوسط {((ev.strategicAlignmentScore + ev.feasibilityScore + ev.resourceReadinessScore) / 3).toFixed(1)} / 10</span>}
                 </div>
@@ -446,15 +452,15 @@ export function IdeaDetailsClient({ id, initialTab = "overview" }: { id: string;
         {requests.length > 0 ? requests.map((request) => (
           <Card key={request.id}>
             <div className="flex flex-wrap items-start justify-between gap-3">
-              <p className="text-xs text-slate-500">أُرسل في {formatDate(request.requestedAt)}</p>
+              <p className="text-xs text-ispec-ink-soft">أُرسل في {formatDate(request.requestedAt)}</p>
               <StatusBadge tone={requestStatusTone[request.status]}>{requestStatusLabel[request.status]}</StatusBadge>
             </div>
-            <p className="mt-4 text-sm leading-6 text-slate-700">{request.requestText}</p>
+            <p className="mt-4 text-sm leading-6 text-ispec-ink-soft">{request.requestText}</p>
             {request.responseText && (
-              <div className="mt-5 rounded-lg border border-slate-200 bg-slate-50 p-4">
-                <p className="text-xs font-bold text-slate-500">رد المبتكر</p>
+              <div className="mt-5 rounded-lg border border-ispec-border-soft bg-ispec-surface-sunken p-4">
+                <p className="text-xs font-bold text-ispec-ink-soft">رد المبتكر</p>
                 <p className="mt-2 text-sm leading-6">{request.responseText}</p>
-                {request.respondedAt && <p className="mt-2 text-xs text-slate-400">{formatDate(request.respondedAt)}</p>}
+                {request.respondedAt && <p className="mt-2 text-xs text-ispec-ink-soft">{formatDate(request.respondedAt)}</p>}
               </div>
             )}
           </Card>
@@ -466,11 +472,11 @@ export function IdeaDetailsClient({ id, initialTab = "overview" }: { id: string;
       <Card>
         <SectionTitle title="ملخص التقييم"/>
         <div className="rounded-xl bg-ispec-brand-50 p-5 text-center"><p className="text-sm text-ispec-brand-800">متوسط التقييم ({evaluations.length} تقييم)</p><p className="mt-2 text-4xl font-black text-ispec-brand-800">{evaluationAverage}<span className="text-lg"> / 10</span></p></div>
-        <div className="mt-5 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-800"><Info className="mb-2 h-4 w-4"/>بحسب الصلاحيات المعتمدة حاليًا، تقديم التوصية واتخاذ القرار على الأفكار يقعان ضمن صلاحيات مسؤول الجهة فقط. النموذج المقابل أداة تحضير محلية ولا يُرفع إلى النظام الفعلي.</div>
+        <div className="mt-5 rounded-lg border border-ispec-warning-soft bg-ispec-warning-soft p-3 text-xs leading-5 text-ispec-warning"><Info className="mb-2 h-4 w-4"/>بحسب الصلاحيات المعتمدة حاليًا، تقديم التوصية واتخاذ القرار على الأفكار يقعان ضمن صلاحيات مسؤول الجهة فقط. النموذج المقابل أداة تحضير محلية ولا يُرفع إلى النظام الفعلي.</div>
       </Card>
       <Card>
         <SectionTitle title="إعداد التوصية" description="لخص نتائج المراجعة — يُحفظ محليًا فقط، لتحضير المدخلات لمسؤول الجهة."/>
-        {recommendationSubmitted && <div className="mb-5 rounded-lg border border-emerald-200 bg-emerald-50 p-4"><p className="font-semibold text-emerald-800">تم حفظ التوصية محليًا فقط — تقديم التوصية الفعلي يقع ضمن صلاحيات مسؤول الجهة.</p></div>}
+        {recommendationSubmitted && <div className="mb-5 rounded-lg border border-ispec-success-soft bg-ispec-success-soft p-4"><p className="font-semibold text-ispec-success">تم حفظ التوصية محليًا فقط — تقديم التوصية الفعلي يقع ضمن صلاحيات مسؤول الجهة.</p></div>}
         <div className="grid gap-5 md:grid-cols-2">
           <FormField label="نقاط القوة"><textarea disabled={recommendationSubmitted} value={recommendation.strengths} onChange={(event) => setRecommendation((current) => ({ ...current, strengths: event.target.value }))} className={textareaClass}/></FormField>
           <FormField label="التحديات"><textarea disabled={recommendationSubmitted} value={recommendation.challenges} onChange={(event) => setRecommendation((current) => ({ ...current, challenges: event.target.value }))} className={textareaClass}/></FormField>

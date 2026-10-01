@@ -1,7 +1,6 @@
 "use client";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useAppData } from "@/lib/store";
 import { PageHeader, Card, EmptyState, LoadingState } from "@/components/ui/layout-bits";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -21,9 +20,17 @@ import type {
   ProjectRisk,
   KPI,
   ImpactMeasurement,
+  InnovationChallenge,
+  InnovationOpportunity,
+  Decision,
+  User,
 } from "@/lib/types";
 import { fetchOrgIdea, fetchUserNames } from "@/lib/client/org-ideas";
 import { fetchOrgProject, transitionProject } from "@/lib/client/org-projects";
+import { fetchOrgChallenges } from "@/lib/client/org-challenges";
+import { fetchOrgOpportunities } from "@/lib/client/org-opportunities";
+import { fetchOrgDecisions } from "@/lib/client/org-evaluations";
+import { fetchOrgMembers } from "@/lib/client/org-users";
 import {
   fetchProjectRequirements,
   fetchProjectMembers,
@@ -60,11 +67,14 @@ import { allowedProjectTransitions } from "@/lib/server/workflow/project-status"
 // lookups in "overview" are Group F/G scope and stay on the mock store.
 export default function ProjectDetailsPage() {
   const { id } = useParams<{ id: string }>();
-  const d = useAppData();
 
   const [p, setP] = useState<Project | null>(null);
   const [ownerName, setOwnerName] = useState<string>();
   const [ideaTitle, setIdeaTitle] = useState<string>();
+  const [challenges, setChallenges] = useState<InnovationChallenge[]>([]);
+  const [opportunities, setOpportunities] = useState<InnovationOpportunity[]>([]);
+  const [orgDecisions, setOrgDecisions] = useState<Decision[]>([]);
+  const [orgUsers, setOrgUsers] = useState<User[]>([]);
   const [loadState, setLoadState] = useState<"loading" | "error" | "ready">("loading");
   const [reloadKey, setReloadKey] = useState(0);
   const [transitioningTo, setTransitioningTo] = useState<ProjectStatus | null>(null);
@@ -99,7 +109,7 @@ export default function ProjectDetailsPage() {
 
   const loadProjectData = useCallback(async (projectId: string) => {
     const project = await fetchOrgProject(projectId);
-    const [names, idea, reqRows, memberRows, docRows, updateRows, taskRows, riskRows, kpiRows, impactRows] = await Promise.all([
+    const [names, idea, reqRows, memberRows, docRows, updateRows, taskRows, riskRows, kpiRows, impactRows, challengeRows, opportunityRows, decisionRows, userRows] = await Promise.all([
       fetchUserNames([project.ownerId]),
       fetchOrgIdea(project.ideaId).catch(() => null),
       fetchProjectRequirements(projectId),
@@ -110,6 +120,10 @@ export default function ProjectDetailsPage() {
       fetchProjectRisks(projectId),
       fetchProjectKpis(projectId),
       fetchProjectImpactMeasurements(projectId),
+      fetchOrgChallenges(project.organizationId),
+      fetchOrgOpportunities(project.organizationId),
+      fetchOrgDecisions(project.organizationId),
+      fetchOrgMembers(project.organizationId),
     ]);
     return {
       project,
@@ -123,6 +137,10 @@ export default function ProjectDetailsPage() {
       riskRows,
       kpiRows,
       impactRows,
+      challengeRows,
+      opportunityRows,
+      decisionRows,
+      userRows,
     };
   }, []);
 
@@ -142,6 +160,10 @@ export default function ProjectDetailsPage() {
         setRisks(data.riskRows);
         setKpis(data.kpiRows);
         setImpacts(data.impactRows);
+        setChallenges(data.challengeRows);
+        setOpportunities(data.opportunityRows);
+        setOrgDecisions(data.decisionRows);
+        setOrgUsers(data.userRows);
         setLoadState("ready");
       })
       .catch(() => {
@@ -183,7 +205,7 @@ export default function ProjectDetailsPage() {
     );
   }
 
-  const projectDecisions = d.decisions.filter((x) => x.projectId === id);
+  const projectDecisions = orgDecisions.filter((x) => x.projectId === id);
 
   return (
     <div>
@@ -242,18 +264,18 @@ export default function ProjectDetailsPage() {
         {tab === "overview" && (
           <Card>
             <p>{p.description}</p>
-            <div className="mt-4 text-sm">الهدف الاستراتيجي: {p.strategicGoalIds?.map((g) => d.strategicGoals.find((x) => x.id === g)?.name).filter(Boolean).join("، ") || "—"}</div>
-            <div className="mt-2 text-sm">التحدي/الفرصة: {d.challenges.find((x) => x.id === p.challengeId)?.title ?? d.opportunities.find((x) => x.id === p.opportunityId)?.title ?? "—"}</div>
+            <div className="mt-4 text-sm">الهدف الاستراتيجي: {p.strategicGoalIds?.length ? p.strategicGoalIds.join("، ") : "—"}</div>
+            <div className="mt-2 text-sm">التحدي/الفرصة: {challenges.find((x) => x.id === p.challengeId)?.title ?? opportunities.find((x) => x.id === p.opportunityId)?.title ?? "—"}</div>
           </Card>
         )}
         {tab === "requirements" && <Card>{reqs.map((r) => <div key={r.id} className="border-b p-3"><b>{r.title}</b><div className="text-xs">{r.status} · {r.dueDate ? new Date(r.dueDate).toLocaleDateString("ar-SA") : ""}</div></div>)}</Card>}
-        {tab === "team" && <Card>{members.map((m) => <div key={m.id} className="border-b p-3">{d.users.find((u) => u.id === m.userId)?.fullName} · {m.roleInProject}</div>)}</Card>}
+        {tab === "team" && <Card>{members.map((m) => <div key={m.id} className="border-b p-3">{orgUsers.find((u) => u.id === m.userId)?.fullName} · {m.roleInProject}</div>)}</Card>}
         {tab === "tasks" && (
           <Card>
             <Button className="mb-3" onClick={() => setTaskOpen(true)}>إضافة مهمة</Button>
             {tasks.map((t) => (
               <div key={t.id} className="flex justify-between border-b p-3">
-                <span><b>{t.title}</b><small className="block">{d.users.find((u) => u.id === t.assigneeId)?.fullName}</small></span>
+                <span><b>{t.title}</b><small className="block">{orgUsers.find((u) => u.id === t.assigneeId)?.fullName}</small></span>
                 <Badge tone={t.status === "BLOCKED" ? "danger" : t.status === "DONE" ? "success" : "warning"}>{t.status}</Badge>
               </div>
             ))}
@@ -304,7 +326,7 @@ export default function ProjectDetailsPage() {
       <Modal open={taskOpen} onClose={() => setTaskOpen(false)} title="إضافة مهمة" footer={<Button onClick={async () => { if (!taskTitle) return; await createProjectTask({ projectId: p.id, title: taskTitle, assigneeId: assignee || undefined }); setTaskTitle(""); setAssignee(""); setTaskOpen(false); setReloadKey((k) => k + 1); }}>حفظ</Button>}>
         <div className="space-y-3">
           <FormField label="المهمة"><Input value={taskTitle} onChange={(e) => setTaskTitle(e.target.value)} /></FormField>
-          <FormField label="المسؤول"><Select value={assignee} onChange={(e) => setAssignee(e.target.value)}><option value="">بدون</option>{d.users.map((u) => <option key={u.id} value={u.id}>{u.fullName}</option>)}</Select></FormField>
+          <FormField label="المسؤول"><Select value={assignee} onChange={(e) => setAssignee(e.target.value)}><option value="">بدون</option>{orgUsers.map((u) => <option key={u.id} value={u.id}>{u.fullName}</option>)}</Select></FormField>
         </div>
       </Modal>
       <Modal open={riskOpen} onClose={() => setRiskOpen(false)} title="إضافة خطر أو معوق" footer={<Button onClick={async () => { if (!riskTitle) return; await createProjectRisk({ projectId: p.id, title: riskTitle, description: riskDesc, level: riskLevel, blocker: riskLevel === "CRITICAL" }); setRiskTitle(""); setRiskDesc(""); setRiskLevel("MEDIUM"); setRiskOpen(false); setReloadKey((k) => k + 1); }}>حفظ</Button>}>

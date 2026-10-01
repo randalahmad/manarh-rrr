@@ -31,7 +31,7 @@ export function FormField({
 }
 
 const controlBase =
-  "w-full rounded-[var(--radius-control)] border bg-white px-3.5 py-2.5 text-sm text-[var(--color-ink)] placeholder:text-[var(--color-ink-soft)]/60 transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--color-beacon)]/40";
+  "w-full rounded-[var(--radius-control)] border bg-[var(--color-surface)] px-3.5 py-2.5 text-sm text-[var(--color-ink)] placeholder:text-[var(--color-ink-soft)]/60 transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--color-beacon)]/40";
 
 export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement> & { error?: boolean }>(
   ({ className, error, ...props }, ref) => (
@@ -64,8 +64,12 @@ export const Select = React.forwardRef<
     ref={ref}
     className={cn(controlBase, "appearance-none bg-no-repeat pl-3.5 pr-9", error ? "border-[var(--color-danger)]" : "border-[var(--color-border)]", className)}
     style={{
+      // A data-URI SVG background-image is an isolated resource — it can't
+      // read var(--color-ink) reactively across the light/dark toggle, so
+      // this uses a fixed mid-gray (matching --color-neutral) that stays
+      // legible against both a light and a dark surface.
       backgroundImage:
-        "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2310231f' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>\")",
+        "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>\")",
       backgroundPosition: "left 0.75rem center",
     }}
     {...props}

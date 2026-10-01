@@ -39,7 +39,7 @@
   --color-neutral: #6b7280;
   --color-neutral-soft: #eceef0;
 
-  --font-display: "Noto Kufi Arabic", "Segoe UI", "Tahoma", system-ui, sans-serif;
+  --font-display: "Cairo", "Segoe UI", "Tahoma", system-ui, sans-serif;
   --font-body: "IBM Plex Sans Arabic", "Segoe UI", "Tahoma", system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", "Courier New", monospace;
 
@@ -50,8 +50,53 @@
   --shadow-popover: 0 12px 32px -8px rgba(16, 35, 31, 0.22);
 }
 
+/*
+ * Dark mode — same token names, values inspired by the public landing/login
+ * palette (app/page.tsx, app/login/page.tsx) but a softer, easier-on-the-eyes
+ * background (not the near-black #0B0F1A used there) for an interface people
+ * work in for hours. Toggled via next-themes setting data-theme on <html>
+ * (see app/layout.tsx) — light values above stay the default/light mode.
+ */
+[data-theme="dark"] {
+  --color-ink: #e9eaf0;
+  --color-ink-soft: #a2a8bc;
+  --color-canvas: #171b24;
+  --color-surface: #1e2330;
+  --color-surface-sunken: #262c3b;
+  --color-border: #333a4d;
+  --color-border-soft: #2a303f;
+
+  --color-primary: #2e9c82;
+  --color-primary-dark: #1f6b58;
+  --color-primary-light: #4dbfa3;
+  --color-primary-soft: rgba(46, 156, 130, 0.16);
+
+  --color-beacon: #f0c25b;
+  --color-beacon-dark: #d9a73f;
+  --color-beacon-soft: rgba(240, 194, 91, 0.16);
+
+  --color-success: #4ade9c;
+  --color-success-soft: rgba(74, 222, 156, 0.14);
+  --color-warning: #e8b04b;
+  --color-warning-soft: rgba(232, 176, 75, 0.14);
+  --color-danger: #f87171;
+  --color-danger-soft: rgba(248, 113, 113, 0.14);
+  --color-info: #7fb2f0;
+  --color-info-soft: rgba(127, 178, 240, 0.14);
+  --color-neutral: #9aa3c0;
+  --color-neutral-soft: rgba(154, 163, 192, 0.14);
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.24), 0 8px 24px -12px rgba(0, 0, 0, 0.45);
+  --shadow-popover: 0 12px 32px -8px rgba(0, 0, 0, 0.55);
+}
+
 html {
   direction: rtl;
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
 }
 
 body {
@@ -59,6 +104,7 @@ body {
   color: var(--color-ink);
   font-family: var(--font-body);
   font-feature-settings: "tnum" 1;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .font-display {
@@ -92,6 +138,12 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #bdb8a4;
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--color-ink-soft);
 }
 
 :focus-visible {

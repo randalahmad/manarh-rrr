@@ -153,7 +153,7 @@ export function NotificationBell() {
       </button>
 
       {open && (
-        <div className="absolute left-0 top-11 z-30 w-[340px] max-w-[85vw] rounded-2xl border border-[var(--color-border-soft)] bg-white shadow-[var(--shadow-popover)]">
+        <div className="absolute left-0 top-11 z-30 w-[340px] max-w-[85vw] rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] shadow-[var(--shadow-popover)]">
           <div className="flex items-center justify-between border-b border-[var(--color-border-soft)] px-4 py-3">
             <p className="font-display text-sm font-bold text-[var(--color-ink)]">الإشعارات</p>
             {unread > 0 && (

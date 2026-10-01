@@ -34,7 +34,7 @@ export function FilterDropdown({
 
 export function FilterBar({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-wrap items-center gap-2.5 rounded-[var(--radius-card)] border border-[var(--color-border-soft)] bg-white p-3">
+    <div className="flex flex-wrap items-center gap-2.5 rounded-[var(--radius-card)] border border-[var(--color-border-soft)] bg-[var(--color-surface)] p-3">
       <span className="flex items-center gap-1.5 text-xs font-medium text-[var(--color-ink-soft)]">
         <SlidersHorizontal size={14} />
         عوامل التصفية

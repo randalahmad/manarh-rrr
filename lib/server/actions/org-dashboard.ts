@@ -1,0 +1,17 @@
+"use server";
+
+import { z } from "zod";
+import { runAction, type ActionResult } from "@/lib/server/errors";
+import { requireActiveUser } from "@/lib/server/auth/guards";
+import { uuid } from "@/lib/server/validation/schemas";
+import { getOrgImpactMeasurementCount } from "@/lib/server/services/org-dashboard";
+
+const schema = z.object({ organizationId: uuid });
+
+export async function getOrgImpactMeasurementCountAction(input: unknown): Promise<ActionResult<number>> {
+  return runAction(async () => {
+    const { organizationId } = schema.parse(input);
+    const actor = await requireActiveUser();
+    return getOrgImpactMeasurementCount(actor, organizationId);
+  });
+}

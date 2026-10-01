@@ -16,9 +16,10 @@ import {
   ClipboardCheck,
 } from "lucide-react";
 
-import { useAppData } from "@/lib/store";
 import { useToast } from "@/components/ui/toast";
-import { PageHeader, Card } from "@/components/ui/layout-bits";
+import { PageHeader, Card, EmptyState, LoadingState } from "@/components/ui/layout-bits";
+import { getCurrentOrgSession } from "@/lib/client/org-ideas";
+import { fetchOrgSettings, saveOrgSettings } from "@/lib/client/org-settings";
 import { Button } from "@/components/ui/button";
 import {
   FormField,
@@ -253,9 +254,15 @@ const mapEscalationRules = (
     active: rule.isActive,
   }));
 
-export default function OrganizationSettingsPage() {
-  const { orgSettings, updateOrgSettings } = useAppData();
+function SettingsForm({
+  orgSettings,
+  updateOrgSettings,
+}: {
+  orgSettings: OrganizationSettings;
+  updateOrgSettings: (next: OrganizationSettings) => Promise<void>;
+}) {
   const { show } = useToast();
+  const [saving, setSaving] = useState(false);
 
   const [form, setForm] = useState(orgSettings);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -319,7 +326,7 @@ export default function OrganizationSettingsPage() {
       },
     }));
 
-  const save = () => {
+  const save = async () => {
     const errs: Record<string, string> = {};
 
     if (!form.name.trim()) {
@@ -400,9 +407,16 @@ export default function OrganizationSettingsPage() {
       })),
     };
 
-    updateOrgSettings(nextSettings);
-    setForm(nextSettings);
-    show("تم حفظ إعدادات الجهة بنجاح");
+    setSaving(true);
+    try {
+      await updateOrgSettings(nextSettings);
+      setForm(nextSettings);
+      show("تم حفظ إعدادات الجهة بنجاح");
+    } catch (err) {
+      show(err instanceof Error ? err.message : "تعذر حفظ الإعدادات", "danger");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const cancel = () => {
@@ -613,6 +627,7 @@ export default function OrganizationSettingsPage() {
               <Button
                 icon={<Save size={15} />}
                 onClick={save}
+                loading={saving}
               >
                 حفظ التغييرات
               </Button>
@@ -818,7 +833,7 @@ export default function OrganizationSettingsPage() {
               return (
                 <div
                   key={stage.id}
-                  className="rounded-xl border border-[var(--color-border-soft)] bg-white"
+                  className="rounded-xl border border-[var(--color-border-soft)] bg-[var(--color-surface)]"
                 >
                   <div className="flex items-center gap-3 p-3">
                     <GripVertical
@@ -1337,6 +1352,67 @@ export default function OrganizationSettingsPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+// Real settings bundle (lib/client/org-settings.ts, backed by new
+// ORG:VIEW/EDIT-gated read+replace-all actions) replacing the previous
+// lib/store.tsx mock. SettingsForm above is unchanged internally — it just
+// now receives real data as props instead of reading useAppData() directly,
+// and its save callback awaits a real network write.
+export default function OrganizationSettingsPage() {
+  const [settings, setSettings] = useState<OrganizationSettings | null>(null);
+  const [organizationId, setOrganizationId] = useState<string | null>(null);
+  const [loadState, setLoadState] = useState<"loading" | "error" | "ready">("loading");
+  const [reloadKey, setReloadKey] = useState(0);
+
+  React.useEffect(() => {
+    let cancelled = false;
+    getCurrentOrgSession()
+      .then(({ organizationId: orgId }) => fetchOrgSettings(orgId).then((data) => ({ orgId, data })))
+      .then(({ orgId, data }) => {
+        if (cancelled) return;
+        setOrganizationId(orgId);
+        setSettings(data);
+        setLoadState("ready");
+      })
+      .catch(() => {
+        if (!cancelled) setLoadState("error");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [reloadKey]);
+
+  if (loadState === "loading") return <LoadingState label="جارٍ تحميل إعدادات الجهة..." />;
+  if (loadState === "error" || !settings || !organizationId) {
+    return (
+      <EmptyState
+        title="تعذر تحميل إعدادات الجهة"
+        description="حدث خطأ أثناء الاتصال بالخادم."
+        action={
+          <Button
+            variant="outline"
+            onClick={() => {
+              setLoadState("loading");
+              setReloadKey((k) => k + 1);
+            }}
+          >
+            إعادة المحاولة
+          </Button>
+        }
+      />
+    );
+  }
+
+  return (
+    <SettingsForm
+      orgSettings={settings}
+      updateOrgSettings={async (next) => {
+        const saved = await saveOrgSettings(organizationId, next);
+        setSettings(saved);
+      }}
+    />
   );
 }
 

@@ -4,17 +4,17 @@ import React, { Suspense, useCallback, useEffect, useMemo, useState } from "reac
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
-import { useAppData } from "@/lib/store";
 import { PageHeader, Card, Pagination, EmptyState, LoadingState } from "@/components/ui/layout-bits";
 import { SearchInput, Select } from "@/components/ui/form";
 import { FilterBar, FilterDropdown } from "@/components/ui/filter-bar";
 import { DataTable, type Column } from "@/components/ui/data-table";
 import { StatusBadge, Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import type { Idea, IdeaCategory, IdeaStatus } from "@/lib/types";
+import type { Idea, IdeaCategory, IdeaStatus, StrategicGoal } from "@/lib/types";
 import { IDEA_LIFECYCLE_ORDER } from "@/lib/types";
 import { IDEA_STATUS_LABELS, IDEA_STATUS_TONE, SUBMITTER_TYPE_LABELS, formatDate } from "@/lib/utils";
 import { getCurrentOrgSession, fetchOrgIdeas, fetchOrgCategories, fetchUserNames } from "@/lib/client/org-ideas";
+import { fetchOrgStrategicGoals } from "@/lib/client/org-strategic-goals";
 
 const PAGE_SIZE = 8;
 
@@ -27,14 +27,15 @@ export default function IdeasPortfolioPage() {
 }
 
 function IdeasPortfolioInner() {
-  // Strategic goals stay on the mock store (Group F scope — no real
-  // idea<->strategic-goal linkage exists yet). Ideas/categories/submitter
-  // names are fetched from the real backend below.
-  const { strategicGoals } = useAppData();
+  // Strategic goals are real now, but `idea.strategicGoalIds` is still
+  // always `[]` on a real idea (no idea<->strategic-goal join table is
+  // populated anywhere yet) — so this filter's option list is real, even
+  // though it still can't match a real idea. Documented, not a bug.
   const searchParams = useSearchParams();
 
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [categories, setCategories] = useState<IdeaCategory[]>([]);
+  const [strategicGoals, setStrategicGoals] = useState<StrategicGoal[]>([]);
   const [userNames, setUserNames] = useState<Map<string, string>>(new Map());
   const [loadState, setLoadState] = useState<"loading" | "error" | "ready">("loading");
   const [reloadKey, setReloadKey] = useState(0);
@@ -48,14 +49,16 @@ function IdeasPortfolioInner() {
     (async () => {
       try {
         const session = await getCurrentOrgSession();
-        const [fetchedIdeas, fetchedCategories] = await Promise.all([
+        const [fetchedIdeas, fetchedCategories, fetchedGoals] = await Promise.all([
           fetchOrgIdeas(session.organizationId),
           fetchOrgCategories(session.organizationId),
+          fetchOrgStrategicGoals(session.organizationId),
         ]);
         const names = await fetchUserNames(fetchedIdeas.map((i) => i.submitterId));
         if (cancelled) return;
         setIdeas(fetchedIdeas);
         setCategories(fetchedCategories);
+        setStrategicGoals(fetchedGoals);
         setUserNames(names);
         setLoadState("ready");
       } catch {

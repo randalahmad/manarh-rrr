@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Menu, ChevronDown, User, LogOut } from "lucide-react";
 import { ROLE_LABELS } from "@/lib/utils";
 import { Avatar } from "../ui/layout-bits";
+import { ThemeToggle } from "../ui/theme-toggle";
 import { NotificationBell } from "./notification-panel";
 import { PAGE_TITLES } from "./nav-config";
 import { signOutAction } from "@/lib/server/actions/auth";
@@ -46,7 +47,7 @@ export function Header({ onOpenMobileMenu }: { onOpenMobileMenu: () => void }) {
   }, []);
 
   return (
-    <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-[var(--color-border-soft)] bg-white/90 px-4 backdrop-blur sm:px-6">
+    <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-[var(--color-border-soft)] bg-[var(--color-surface)]/90 px-4 backdrop-blur sm:px-6">
       <div className="flex items-center gap-3">
         <button
           onClick={onOpenMobileMenu}
@@ -59,6 +60,7 @@ export function Header({ onOpenMobileMenu }: { onOpenMobileMenu: () => void }) {
       </div>
 
       <div className="flex items-center gap-1.5 sm:gap-3">
+        <ThemeToggle className="text-[var(--color-ink-soft)] hover:bg-[var(--color-surface-sunken)]" />
         <NotificationBell />
         <div className="mx-1 h-6 w-px bg-[var(--color-border-soft)]" />
         <div className="relative" ref={ref}>
@@ -74,7 +76,7 @@ export function Header({ onOpenMobileMenu }: { onOpenMobileMenu: () => void }) {
             <ChevronDown size={14} className="hidden text-[var(--color-ink-soft)] sm:block" />
           </button>
           {menuOpen && (
-            <div className="absolute left-0 top-11 z-30 w-56 overflow-hidden rounded-xl border border-[var(--color-border-soft)] bg-white shadow-[var(--shadow-popover)]">
+            <div className="absolute left-0 top-11 z-30 w-56 overflow-hidden rounded-xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] shadow-[var(--shadow-popover)]">
               <div className="border-b border-[var(--color-border-soft)] px-4 py-3">
                 <p className="text-sm font-semibold text-[var(--color-ink)]">{displayName}</p>
                 <p className="text-xs text-[var(--color-ink-soft)]">{displayEmail}</p>

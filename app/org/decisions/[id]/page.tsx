@@ -2,7 +2,6 @@
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import { useAppData } from "@/lib/store";
 import { PageHeader, Card, EmptyState, LoadingState } from "@/components/ui/layout-bits";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -33,7 +32,6 @@ type LoadedData = {
 
 export default function DecisionDetail() {
   const { id } = useParams<{ id: string }>();
-  const d = useAppData();
 
   const [data, setData] = useState<LoadedData | null>(null);
   const [loadState, setLoadState] = useState<"loading" | "error" | "ready">("loading");
@@ -169,7 +167,7 @@ export default function DecisionDetail() {
       <PageHeader
         title={`قرار الجهة: ${idea.title}`}
         description="قرار موثق مع سبب/شروط وملاحظات وإشعار، وربط مباشر بتحويل الفكرة إلى مشروع."
-        actions={!decision && d.can("GOVERNANCE", "APPROVE") ? <Button onClick={() => setOpen(true)}>اتخاذ القرار</Button> : undefined}
+        actions={!decision ? <Button onClick={() => setOpen(true)}>اتخاذ القرار</Button> : undefined}
       />
       <div className="grid gap-5 lg:grid-cols-2">
         <Card>

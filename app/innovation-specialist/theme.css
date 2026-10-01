@@ -7,33 +7,64 @@
  * generates the ispec-* utility classes used across app/innovation-specialist
  * and components/innovation-specialist.
  *
- * Ported as-is from the original Repository 3 tailwind.config.ts
- * (`brand` colors, `boxShadow.card`) — values are unchanged, only renamed.
+ * Cohesion pass: neutrals/status colors below now reuse the EXACT same
+ * values as the root namespace (app/globals.css) — same light palette, same
+ * dark-mode palette — so a card, border, or danger badge reads identically
+ * whether you're in Org Admin or here. Only `ispec-brand-*` keeps its own
+ * identity, and even that now derives from `--color-primary` so it moves
+ * together with the platform's brand color instead of drifting on its own.
+ * Previously (before this pass) this file only defined brand colors/shadow;
+ * everything else was hardcoded Tailwind slate/emerald/amber/red/sky
+ * classes directly in components/innovation-specialist/** — those are now
+ * routed through the tokens below instead.
  */
 @theme {
-  --color-ispec-brand-50: #f2f7f4;
-  --color-ispec-brand-100: #dfece4;
-  --color-ispec-brand-600: #246b4a;
-  --color-ispec-brand-700: #19563a;
-  --color-ispec-brand-800: #16452f;
-  --color-ispec-brand-900: #123a29;
+  --color-ispec-brand-50: color-mix(in srgb, var(--color-primary) 8%, white);
+  --color-ispec-brand-100: color-mix(in srgb, var(--color-primary) 16%, white);
+  --color-ispec-brand-600: var(--color-primary-light);
+  --color-ispec-brand-700: var(--color-primary);
+  --color-ispec-brand-800: var(--color-primary-dark);
+  --color-ispec-brand-900: var(--color-primary-dark);
 
-  --shadow-ispec-card: 0 1px 2px rgba(16, 24, 40, 0.04);
+  --color-ispec-ink: var(--color-ink);
+  --color-ispec-ink-soft: var(--color-ink-soft);
+  --color-ispec-canvas: var(--color-canvas);
+  --color-ispec-surface: var(--color-surface);
+  --color-ispec-surface-sunken: var(--color-surface-sunken);
+  --color-ispec-border: var(--color-border);
+  --color-ispec-border-soft: var(--color-border-soft);
+
+  --color-ispec-success: var(--color-success);
+  --color-ispec-success-soft: var(--color-success-soft);
+  --color-ispec-warning: var(--color-warning);
+  --color-ispec-warning-soft: var(--color-warning-soft);
+  --color-ispec-danger: var(--color-danger);
+  --color-ispec-danger-soft: var(--color-danger-soft);
+  --color-ispec-info: var(--color-info);
+  --color-ispec-info-soft: var(--color-info-soft);
+  --color-ispec-neutral-soft: var(--color-neutral-soft);
+
+  --shadow-ispec-card: var(--shadow-card);
 }
 
 /*
- * Non-Tailwind reset styles from the original Repository 3 globals.css.
- * Originally applied globally via `html`/`body`/`*` selectors — scoped here
- * under .ispec-scope (applied by app/innovation-specialist/layout.tsx) so
- * they only affect this section and never leak into Org Admin or Innovator.
+ * Non-Tailwind reset styles, scoped under .ispec-scope (applied by
+ * app/innovation-specialist/layout.tsx). Font unified to Cairo (headings)/
+ * IBM Plex Sans Arabic (body) — same pairing as the rest of the platform
+ * (already loaded once via the Google Fonts link in app/layout.tsx) —
+ * replacing the section's previously-standalone Tajawal.
  */
 .ispec-scope {
-  color-scheme: light;
-  background: #f7f8f8;
-  color: #17201b;
-  font-family: "Tajawal", Tahoma, Arial, sans-serif;
+  background: var(--color-ispec-canvas);
+  color: var(--color-ispec-ink);
+  font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+}
+.ispec-scope h1,
+.ispec-scope h2,
+.ispec-scope h3 {
+  font-family: "Cairo", "IBM Plex Sans Arabic", sans-serif;
 }
 .ispec-scope * {
   box-sizing: border-box;
@@ -45,6 +76,6 @@
   font: inherit;
 }
 .ispec-scope :focus-visible {
-  outline: 2px solid #246b4a;
+  outline: 2px solid var(--color-ispec-brand-700);
   outline-offset: 2px;
 }

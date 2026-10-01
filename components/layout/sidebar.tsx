@@ -7,19 +7,37 @@ import { ChevronsRight, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NAV_ITEMS } from "./nav-config";
 
+/**
+ * New mark (redesigned per user request): a self-contained badge with its
+ * own fixed background — unlike the old logo (raw SVG shapes sitting
+ * directly on the sidebar's dark panel), this reads correctly regardless
+ * of the sidebar's own surface color, which now follows the light/dark
+ * toggle instead of staying a fixed brand green (see Sidebar below).
+ */
 function BeaconMark({ collapsed }: { collapsed: boolean }) {
   return (
     <div className="flex items-center gap-2.5 overflow-hidden">
-      <svg width="34" height="34" viewBox="0 0 40 40" fill="none" className="shrink-0">
-        <path d="M20 3 L31 12 V33 H9 V12 Z" fill="var(--color-primary-light)" />
-        <path d="M20 3 L31 12 H9 Z" fill="var(--color-beacon)" />
-        <rect x="16" y="18" width="8" height="15" fill="var(--color-primary-dark)" />
-        <circle cx="20" cy="10" r="2.4" fill="#fff" className="beacon-pulse" />
-      </svg>
+      <div
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+        style={{ background: "var(--color-primary)" }}
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          {/* radiating beacon rays */}
+          <g stroke="var(--color-beacon)" strokeWidth="1.6" strokeLinecap="round" className="beacon-pulse">
+            <path d="M12 2.5v2" />
+            <path d="M7.5 4.2 8.6 6" />
+            <path d="M16.5 4.2 15.4 6" />
+          </g>
+          {/* lighthouse tower */}
+          <path d="M9.5 8 L14.5 8 L16 21 L8 21 Z" fill="#fff" />
+          <path d="M10.2 8 L13.8 8 L13.3 11.5 L10.7 11.5 Z" fill="var(--color-beacon)" />
+          <rect x="8.6" y="16.5" width="6.8" height="1.6" fill="var(--color-primary)" />
+        </svg>
+      </div>
       {!collapsed && (
         <div className="leading-tight">
-          <p className="font-display text-lg font-bold text-white">منارة</p>
-          <p className="text-[10px] text-white/60">إدارة الابتكار المؤسسي</p>
+          <p className="font-display text-lg font-bold text-[var(--color-ink)]">منارة</p>
+          <p className="text-[10px] text-[var(--color-ink-soft)]">إدارة الابتكار المؤسسي</p>
         </div>
       )}
     </div>
@@ -39,13 +57,16 @@ export function Sidebar({
 }) {
   const pathname = usePathname();
 
+  // Surface-toned sidebar (follows the light/dark toggle like the rest of
+  // the page) instead of a fixed brand-green panel — the logo badge above
+  // now carries the brand color instead of the whole sidebar.
   const content = (
-    <div className="flex h-full flex-col bg-[var(--color-primary)]">
+    <div className="flex h-full flex-col border-l border-[var(--color-border-soft)] bg-[var(--color-surface)]">
       <div className="flex items-center justify-between px-4 py-5">
         <BeaconMark collapsed={collapsed} />
         <button
           onClick={onCloseMobile}
-          className="rounded-lg p-1.5 text-white/70 hover:bg-white/10 lg:hidden"
+          className="rounded-lg p-1.5 text-[var(--color-ink-soft)] hover:bg-[var(--color-surface-sunken)] lg:hidden"
           aria-label="إغلاق القائمة"
         >
           <X size={18} />
@@ -64,7 +85,9 @@ export function Sidebar({
               title={collapsed ? item.label : undefined}
               className={cn(
                 "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
-                active ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5 hover:text-white"
+                active
+                  ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
+                  : "text-[var(--color-ink-soft)] hover:bg-[var(--color-surface-sunken)] hover:text-[var(--color-ink)]"
               )}
             >
               {active && (
@@ -77,10 +100,10 @@ export function Sidebar({
         })}
       </nav>
 
-      <div className="border-t border-white/10 p-2.5">
+      <div className="border-t border-[var(--color-border-soft)] p-2.5">
         <button
           onClick={onToggleCollapse}
-          className="hidden w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-white/70 hover:bg-white/5 hover:text-white lg:flex"
+          className="hidden w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-[var(--color-ink-soft)] hover:bg-[var(--color-surface-sunken)] hover:text-[var(--color-ink)] lg:flex"
         >
           <ChevronsRight size={18} className={cn("transition-transform", collapsed && "rotate-180")} />
           {!collapsed && "طي القائمة"}

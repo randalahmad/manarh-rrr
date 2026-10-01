@@ -2,7 +2,6 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useAppData } from "@/lib/store";
 import { PageHeader, Card, EmptyState, LoadingState } from "@/components/ui/layout-bits";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,6 +20,9 @@ import type {
   Decision,
   DecisionType,
   Project,
+  InnovationChallenge,
+  InnovationOpportunity,
+  ImpactMeasurement,
 } from "@/lib/types";
 import { allowedIdeaTransitions } from "@/lib/server/workflow/idea-status";
 import {
@@ -42,19 +44,23 @@ import {
   makeDecision as makeDecisionRequest,
 } from "@/lib/client/org-evaluations";
 import { fetchOrgProject } from "@/lib/client/org-projects";
+import { fetchOrgChallenges } from "@/lib/client/org-challenges";
+import { fetchOrgOpportunities } from "@/lib/client/org-opportunities";
+import { fetchOrgImpactMeasurements } from "@/lib/client/org-impact";
 
 // Idea core (this idea, its category, submitter, status history,
 // information requests, comments) is real — Phase 6, Group B. Evaluator
 // assignments/evaluations/recommendations/decisions are real — Phase 6,
 // Group C. The resulting project (if any) is real — Phase 6, Group D.
-// Impact and challenge/opportunity name resolution below stay on the mock
-// store (`useAppData()`) — those domains are out of scope here (Group E for
-// impact, Group G for challenges/opportunities) and will always show
-// empty/"—" for a real idea until they're migrated, which is correct today
-// rather than a bug to work around.
+// Challenge/opportunity name resolution and org-wide impact measurements
+// are now real too (both domains were built out in a later pass — see
+// lib/client/org-challenges.ts, org-opportunities.ts, org-impact.ts).
+// `idea.strategicGoalIds` is still always `[]` on a real idea — no real
+// idea<->strategic-goal join table is populated anywhere yet — so the
+// "الأهداف" field below stays empty for a real idea; that remains correct,
+// not a bug to work around.
 export default function IdeaDetailsPage() {
   const { id } = useParams<{ id: string }>();
-  const d = useAppData();
 
   const [idea, setIdea] = useState<Idea | null>(null);
   const [categoryName, setCategoryName] = useState<string>();
@@ -67,6 +73,9 @@ export default function IdeaDetailsPage() {
   const [recs, setRecs] = useState<Recommendation[]>([]);
   const [decisions, setDecisions] = useState<Decision[]>([]);
   const [project, setProject] = useState<Project | null>(null);
+  const [challenges, setChallenges] = useState<InnovationChallenge[]>([]);
+  const [opportunities, setOpportunities] = useState<InnovationOpportunity[]>([]);
+  const [impactMeasurements, setImpactMeasurements] = useState<ImpactMeasurement[]>([]);
   const [loadState, setLoadState] = useState<"loading" | "error" | "ready">("loading");
   const [reloadKey, setReloadKey] = useState(0);
 
@@ -75,7 +84,19 @@ export default function IdeaDetailsPage() {
   // (which set state directly, not from inside an effect).
   const loadIdeaData = useCallback(async (ideaId: string) => {
     const fetchedIdea = await fetchOrgIdea(ideaId);
-    const [categories, fetchedHistory, fetchedRequests, fetchedComments, fetchedAssignments, fetchedEvals, fetchedRecs, fetchedDecisions] = await Promise.all([
+    const [
+      categories,
+      fetchedHistory,
+      fetchedRequests,
+      fetchedComments,
+      fetchedAssignments,
+      fetchedEvals,
+      fetchedRecs,
+      fetchedDecisions,
+      fetchedChallenges,
+      fetchedOpportunities,
+      fetchedImpact,
+    ] = await Promise.all([
       fetchOrgCategories(fetchedIdea.organizationId),
       fetchIdeaStatusHistory(ideaId),
       fetchInformationRequests(ideaId),
@@ -84,6 +105,9 @@ export default function IdeaDetailsPage() {
       fetchEvaluationsForIdea(ideaId),
       fetchRecommendationsForIdea(ideaId),
       fetchDecisionsForIdea(ideaId),
+      fetchOrgChallenges(fetchedIdea.organizationId),
+      fetchOrgOpportunities(fetchedIdea.organizationId),
+      fetchOrgImpactMeasurements(fetchedIdea.organizationId),
     ]);
     const names = await fetchUserNames([
       fetchedIdea.submitterId,
@@ -103,6 +127,9 @@ export default function IdeaDetailsPage() {
       recs: fetchedRecs,
       decisions: fetchedDecisions,
       project: fetchedProject,
+      challenges: fetchedChallenges,
+      opportunities: fetchedOpportunities,
+      impactMeasurements: fetchedImpact,
     };
   }, []);
 
@@ -118,6 +145,9 @@ export default function IdeaDetailsPage() {
     setRecs(data.recs);
     setDecisions(data.decisions);
     setProject(data.project);
+    setChallenges(data.challenges);
+    setOpportunities(data.opportunities);
+    setImpactMeasurements(data.impactMeasurements);
   }, []);
 
   useEffect(() => {
@@ -163,7 +193,20 @@ export default function IdeaDetailsPage() {
   const [isDeciding, setIsDeciding] = useState(false);
   const [decisionError, setDecisionError] = useState("");
 
-  const allowed = useMemo(() => (idea ? allowedIdeaTransitions(idea.status) : []), [idea]);
+  // CONVERTED_TO_PROJECT is graph-legal from APPROVED/IDEA_DEVELOPMENT but is
+  // deliberately excluded from this generic "any legal next status" button
+  // row: unlike every other transition, it has a required side effect (a
+  // real row in `projects`, owner + dates collected from the user) that
+  // transitionIdeaStatusAction does not perform — it only flips the status
+  // column. Reaching this status here would leave the idea marked converted
+  // with no actual project behind it. The real conversion flow (project
+  // name/owner/dates form -> createProjectFromIdeaAction, which creates the
+  // project AND performs this exact transition atomically) lives on
+  // app/org/decisions/[id]/page.tsx.
+  const allowed = useMemo(
+    () => (idea ? allowedIdeaTransitions(idea.status).filter((s) => s !== "CONVERTED_TO_PROJECT") : []),
+    [idea]
+  );
 
   if (loadState === "loading") return <LoadingState label="جارٍ تحميل الفكرة..." />;
   if (loadState === "error" || !idea) {
@@ -176,9 +219,9 @@ export default function IdeaDetailsPage() {
     );
   }
 
-  const challenge = d.challenges.find((c) => c.id === idea.challengeId);
-  const opportunity = d.opportunities.find((o) => o.id === idea.opportunityId);
-  const impacts = d.impactMeasurements.filter((m) => m.ideaId === id || m.projectId === idea.projectId);
+  const challenge = challenges.find((c) => c.id === idea.challengeId);
+  const opportunity = opportunities.find((o) => o.id === idea.opportunityId);
+  const impacts = impactMeasurements.filter((m) => m.ideaId === id || m.projectId === idea.projectId);
 
   const handleTransition = async (status: IdeaStatus) => {
     setTransitioningTo(status);
@@ -245,15 +288,11 @@ export default function IdeaDetailsPage() {
         breadcrumbs={[{ label: "محفظة الأفكار", href: "/org/ideas" }, { label: idea.title }]}
         actions={
           <>
-            {d.can("IDEA", "EDIT") && (
-              <Button variant="outline" onClick={() => setInfoOpen(true)}>طلب معلومات</Button>
-            )}
-            {d.can("GOVERNANCE", "APPROVE") && (
-              decisions.length === 0 ? (
-                <Button onClick={() => setDecisionOpen(true)}>اتخاذ قرار</Button>
-              ) : (
-                <Button disabled title="تم اتخاذ القرار على هذه الفكرة مسبقًا.">اتخاذ قرار</Button>
-              )
+            <Button variant="outline" onClick={() => setInfoOpen(true)}>طلب معلومات</Button>
+            {decisions.length === 0 ? (
+              <Button onClick={() => setDecisionOpen(true)}>اتخاذ قرار</Button>
+            ) : (
+              <Button disabled title="تم اتخاذ القرار على هذه الفكرة مسبقًا.">اتخاذ قرار</Button>
             )}
           </>
         }
@@ -288,7 +327,7 @@ export default function IdeaDetailsPage() {
               <Info l="التصنيف" v={categoryName} />
               <Info l="التحدي" v={challenge?.title} />
               <Info l="الفرصة" v={opportunity?.title} />
-              <Info l="الأهداف" v={idea.strategicGoalIds.map((x) => d.strategicGoals.find((g) => g.id === x)?.name).filter(Boolean).join("، ")} />
+              <Info l="الأهداف" v={idea.strategicGoalIds.length ? idea.strategicGoalIds.join("، ") : undefined} />
               <Info l="تاريخ التقديم" v={new Date(idea.submittedAt).toLocaleDateString("ar-SA")} />
             </div>
             <p className="mt-4 text-sm">{idea.description}</p>

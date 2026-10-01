@@ -146,7 +146,7 @@ export function NotificationsClient() {
   if (loadState === "loading") {
     return (
       <div className="mx-auto max-w-[1500px]">
-        <div className="mt-6 flex min-h-72 items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white text-sm text-slate-500">
+        <div className="mt-6 flex min-h-72 items-center justify-center rounded-xl border border-dashed border-ispec-border bg-ispec-surface text-sm text-ispec-ink-soft">
           جارٍ تحميل الإشعارات...
         </div>
       </div>
@@ -176,7 +176,7 @@ export function NotificationsClient() {
   return (
     <div className="mx-auto max-w-[1500px]">
       {message && (
-        <div role="status" className="fixed left-5 top-20 z-50 flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800 shadow-ispec-card">
+        <div role="status" className="fixed left-5 top-20 z-50 flex items-center gap-2 rounded-lg border border-ispec-success-soft bg-ispec-success-soft px-4 py-3 text-sm font-semibold text-ispec-success shadow-ispec-card">
           <MailCheck className="h-4 w-4" />
           {message}
         </div>
@@ -202,13 +202,13 @@ export function NotificationsClient() {
             <button
               key={item.filter}
               onClick={() => setActiveFilter(item.filter)}
-              className={`rounded-xl border bg-white p-4 text-right shadow-ispec-card transition-colors ${activeFilter === item.filter ? "border-ispec-brand-600 ring-1 ring-ispec-brand-600" : "border-slate-200 hover:border-ispec-brand-100"}`}
+              className={`rounded-xl border bg-ispec-surface p-4 text-right shadow-ispec-card transition-colors ${activeFilter === item.filter ? "border-ispec-brand-600 ring-1 ring-ispec-brand-600" : "border-ispec-border-soft hover:border-ispec-brand-100"}`}
             >
               <span className="flex items-center justify-between gap-2">
-                <span className="text-xs font-medium text-slate-500">{item.label}</span>
+                <span className="text-xs font-medium text-ispec-ink-soft">{item.label}</span>
                 <Icon className="h-4 w-4 text-ispec-brand-700" />
               </span>
-              <strong className="mt-3 block text-2xl text-slate-900">{item.count(notifications)}</strong>
+              <strong className="mt-3 block text-2xl text-ispec-ink">{item.count(notifications)}</strong>
             </button>
           );
         })}
@@ -216,7 +216,7 @@ export function NotificationsClient() {
 
       <Card className="mt-6">
         <SearchInput value={search} onChange={(event) => setSearch(event.target.value)} placeholder="ابحث في الإشعارات" />
-        <div className="mt-4 flex flex-wrap gap-2 border-t border-slate-100 pt-4">
+        <div className="mt-4 flex flex-wrap gap-2 border-t border-ispec-surface-sunken pt-4">
           {filters.map((filter) => (
             <Button key={filter.key} variant={activeFilter === filter.key ? "primary" : "secondary"} className="min-h-9 px-3 text-xs" onClick={() => setActiveFilter(filter.key)}>
               {filter.label}
@@ -226,8 +226,8 @@ export function NotificationsClient() {
       </Card>
 
       <div className="mt-5 flex items-center justify-between">
-        <p className="text-sm text-slate-500">
-          عرض <strong className="text-slate-900">{filtered.length}</strong> من أصل {notifications.length} إشعارات
+        <p className="text-sm text-ispec-ink-soft">
+          عرض <strong className="text-ispec-ink">{filtered.length}</strong> من أصل {notifications.length} إشعارات
         </p>
       </div>
       <div className="mt-3 space-y-3">
@@ -238,16 +238,16 @@ export function NotificationsClient() {
               <Card key={item.id} className={`relative p-0 transition-colors ${!item.isRead ? "border-ispec-brand-100 bg-ispec-brand-50/30" : ""}`}>
                 <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-start sm:p-5">
                   {!item.isRead && <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-ispec-brand-600" aria-label="غير مقروء" />}
-                  <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl ${!item.isRead ? "bg-ispec-brand-100 text-ispec-brand-800" : "bg-slate-100 text-slate-600"}`}>
+                  <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl ${!item.isRead ? "bg-ispec-brand-100 text-ispec-brand-800" : "bg-ispec-surface-sunken text-ispec-ink-soft"}`}>
                     <Icon className="h-5 w-5" />
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h2 className={`text-sm text-slate-900 ${!item.isRead ? "font-extrabold" : "font-semibold"}`}>{item.title}</h2>
+                      <h2 className={`text-sm text-ispec-ink ${!item.isRead ? "font-extrabold" : "font-semibold"}`}>{item.title}</h2>
                       <StatusBadge tone={typeTones[item.bucket]}>{typeLabels[item.bucket]}</StatusBadge>
                     </div>
-                    <p className="mt-2 text-sm leading-6 text-slate-600">{item.message}</p>
-                    <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-slate-400">
+                    <p className="mt-2 text-sm leading-6 text-ispec-ink-soft">{item.message}</p>
+                    <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-ispec-ink-soft">
                       <span>{timeAgo(item.createdAt)}</span>
                     </div>
                   </div>
