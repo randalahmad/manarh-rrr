@@ -1,10 +1,10 @@
 import type { Notification } from '../types';
-import { listMyOrganizationsAction } from '@/lib/server/actions/organizations';
+import { listMyOrganizationsAction } from '@/lib/mock-server/actions/organizations';
 import {
   listMyNotificationsAction,
   markNotificationReadAction,
   markAllNotificationsReadAction,
-} from '@/lib/server/actions/notifications';
+} from '@/lib/mock-server/actions/notifications';
 import type { NotificationRow } from '@/lib/server/services/notifications';
 import type { ActionResult } from '@/lib/server/errors';
 

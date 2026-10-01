@@ -9,7 +9,7 @@ import {
   listChallengesAction,
   createChallengeAction,
   archiveChallengeAction,
-} from "@/lib/server/actions/challenges";
+} from "@/lib/mock-server/actions/challenges";
 import type { ChallengeRow } from "@/lib/server/services/challenges";
 import type { ActionResult } from "@/lib/server/errors";
 

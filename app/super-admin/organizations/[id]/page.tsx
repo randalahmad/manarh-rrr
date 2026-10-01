@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getPlatformOrganizationDetailAction } from "@/lib/server/actions/platform-organizations";
+import { getPlatformOrganizationDetailAction } from "@/lib/mock-server/actions/platform-organizations";
 import { PageHeader, Card } from "@/components/ui/layout-bits";
 import { Badge } from "@/components/ui/badge";
 import { OrganizationStatusToggle } from "@/components/super-admin/organization-status-toggle";

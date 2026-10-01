@@ -20,18 +20,18 @@
  *    backend's own limitation (see attachments.ts's header comment).
  */
 import type { ProjectRequirement, ProjectMember, ProjectDocument, ProjectUpdate, ProjectTask, ProjectRisk, KPI, ImpactMeasurement } from "@/lib/types";
-import { listRequirementsForProjectAction } from "@/lib/server/actions/requirements";
-import { listProjectMembersAction } from "@/lib/server/actions/project-members";
-import { listAttachmentsForEntityAction, createAttachmentAction } from "@/lib/server/actions/attachments";
-import { listProjectUpdatesAction } from "@/lib/server/actions/project-updates";
-import { createTaskAction, listTasksForProjectAction } from "@/lib/server/actions/tasks";
-import { createRiskAction, listRisksForProjectAction } from "@/lib/server/actions/risks";
+import { listRequirementsForProjectAction } from "@/lib/mock-server/actions/requirements";
+import { listProjectMembersAction } from "@/lib/mock-server/actions/project-members";
+import { listAttachmentsForEntityAction, createAttachmentAction } from "@/lib/mock-server/actions/attachments";
+import { listProjectUpdatesAction } from "@/lib/mock-server/actions/project-updates";
+import { createTaskAction, listTasksForProjectAction } from "@/lib/mock-server/actions/tasks";
+import { createRiskAction, listRisksForProjectAction } from "@/lib/mock-server/actions/risks";
 import {
   createKpiAction,
   listKpisForSubjectAction,
   createImpactMeasurementAction,
   listImpactMeasurementsForSubjectAction,
-} from "@/lib/server/actions/measurements";
+} from "@/lib/mock-server/actions/measurements";
 import type { ProjectRequirementRow } from "@/lib/server/services/requirements";
 import type { ProjectMemberRow } from "@/lib/server/services/project-members";
 import type { AttachmentRow } from "@/lib/server/services/attachments";

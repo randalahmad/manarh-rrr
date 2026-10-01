@@ -1,4 +1,4 @@
-import { getMyRoleInOrganizationAction } from '@/lib/server/actions/organizations';
+import { getMyRoleInOrganizationAction } from '@/lib/mock-server/actions/organizations';
 
 /**
  * membershipService abstraction.

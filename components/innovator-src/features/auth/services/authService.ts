@@ -1,7 +1,7 @@
 import type { AuthSession, LoginCredentials, ForgotPasswordPayload, ExternalRegistrationPayload, AuthErrorCode } from '../types';
 import { findMockAccountByEmail, addMockAccount } from '@innovator/services/mock/auth.mock';
 import { mockDelay, generateId } from '@innovator/services/mock/utils';
-import { signInAction, signOutAction, getSessionUserAction, type SessionUser } from '@/lib/server/actions/auth';
+import { signInAction, signOutAction, getSessionUserAction, type SessionUser } from '@/lib/mock-server/actions/auth';
 
 /**
  * authService abstraction.

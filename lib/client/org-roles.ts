@@ -3,7 +3,7 @@
  * (`app/org/roles-permissions/page.tsx`).
  */
 import type { Role, Permission } from "@/lib/types";
-import { listOrgRolesAction } from "@/lib/server/actions/org-roles";
+import { listOrgRolesAction } from "@/lib/mock-server/actions/org-roles";
 import type { RoleWithPermissions, RolePermissionEntry } from "@/lib/server/services/org-roles";
 import type { ActionResult } from "@/lib/server/errors";
 

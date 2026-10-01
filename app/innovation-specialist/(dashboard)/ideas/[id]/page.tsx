@@ -1,6 +1,6 @@
 import { IdeaDetailsClient } from "./idea-details-client";
 import { notFound } from "next/navigation";
-import { getIdeaAction } from "@/lib/server/actions/ideas";
+import { getIdeaAction } from "@/lib/mock-server/actions/ideas";
 
 export default async function IdeaDetailsPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ tab?: string }> }) {
   const { id } = await params;

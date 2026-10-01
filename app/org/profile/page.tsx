@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { ROLE_LABELS, formatDate } from "@/lib/utils";
 import { useSessionUser } from "@/lib/client/use-session-user";
 import { fetchOrgMember, updateOrgMember } from "@/lib/client/org-users";
-import { updateOwnProfileAction } from "@/lib/server/actions/profile";
+import { updateOwnProfileAction } from "@/lib/mock-server/actions/profile";
 import type { User } from "@/lib/types";
 
 /**

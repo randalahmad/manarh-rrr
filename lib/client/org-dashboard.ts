@@ -14,7 +14,7 @@ import { fetchOrgProjects } from "./org-projects";
 import { fetchOrgAssignments } from "./org-evaluations";
 import { fetchOrgInformationRequests } from "./org-information-requests";
 import { fetchOrgAuditLogs } from "./org-audit-logs";
-import { getOrgImpactMeasurementCountAction } from "@/lib/server/actions/org-dashboard";
+import { getOrgImpactMeasurementCountAction } from "@/lib/mock-server/actions/org-dashboard";
 
 export interface OrgDashboardData {
   ideas: Idea[];

@@ -1,6 +1,6 @@
 import type { User, EmploymentStatus } from '@innovator/types/common';
-import { getSessionUserAction } from '@/lib/server/actions/auth';
-import { getOwnProfileAction, updateOwnProfileAction } from '@/lib/server/actions/profile';
+import { getSessionUserAction } from '@/lib/mock-server/actions/auth';
+import { getOwnProfileAction, updateOwnProfileAction } from '@/lib/mock-server/actions/profile';
 import type { ActionResult } from '@/lib/server/errors';
 
 export interface ProfileUpdatePayload {

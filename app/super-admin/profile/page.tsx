@@ -1,4 +1,4 @@
-import { getPlatformAdminProfileAction } from "@/lib/server/actions/platform-admin";
+import { getPlatformAdminProfileAction } from "@/lib/mock-server/actions/platform-admin";
 import { PageHeader, Card, Avatar } from "@/components/ui/layout-bits";
 import { Badge } from "@/components/ui/badge";
 

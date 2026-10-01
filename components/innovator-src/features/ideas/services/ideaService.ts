@@ -16,16 +16,16 @@ import {
   transitionIdeaStatusAction,
   withdrawIdeaAction,
   listIdeaStatusHistoryAction,
-} from '@/lib/server/actions/ideas';
+} from '@/lib/mock-server/actions/ideas';
 import type { IdeaRow, IdeaStatusHistoryRow } from '@/lib/server/services/ideas';
 import {
   respondToInformationRequestAction,
   listInformationRequestsAction,
-} from '@/lib/server/actions/information-requests';
+} from '@/lib/mock-server/actions/information-requests';
 import type { InformationRequestRow } from '@/lib/server/services/information-requests';
-import { listIdeaCategoriesAction } from '@/lib/server/actions/idea-categories';
-import { listMyOrganizationsAction } from '@/lib/server/actions/organizations';
-import { getSessionUserAction } from '@/lib/server/actions/auth';
+import { listIdeaCategoriesAction } from '@/lib/mock-server/actions/idea-categories';
+import { listMyOrganizationsAction } from '@/lib/mock-server/actions/organizations';
+import { getSessionUserAction } from '@/lib/mock-server/actions/auth';
 import type { ActionResult } from '@/lib/server/errors';
 
 /**

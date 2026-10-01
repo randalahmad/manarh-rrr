@@ -9,7 +9,7 @@ import { getCurrentOrgSession, fetchOrgIdeas } from "@/lib/client/org-ideas";
 import { fetchOrgProjects } from "@/lib/client/org-projects";
 import { fetchOrgStrategicGoals } from "@/lib/client/org-strategic-goals";
 import { fetchOrgKpis } from "@/lib/client/org-kpis";
-import { getUsersDisplayInfoAction } from "@/lib/server/actions/user-directory";
+import { getUsersDisplayInfoAction } from "@/lib/mock-server/actions/user-directory";
 import type { KPI, Idea, Project, StrategicGoal } from "@/lib/types";
 
 // Real, org-wide listing (lib/client/org-kpis.ts, backed by a new

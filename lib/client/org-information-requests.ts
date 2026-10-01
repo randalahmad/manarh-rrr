@@ -26,8 +26,8 @@
  * data source backed by real Server Actions, used only by this page.
  */
 import type { InformationRequest } from "@/lib/types";
-import { listInformationRequestsForOrganizationAction } from "@/lib/server/actions/information-requests";
-import { listIdeasAction } from "@/lib/server/actions/ideas";
+import { listInformationRequestsForOrganizationAction } from "@/lib/mock-server/actions/information-requests";
+import { listIdeasAction } from "@/lib/mock-server/actions/ideas";
 import type { InformationRequestRow } from "@/lib/server/services/information-requests";
 import type { ActionResult } from "@/lib/server/errors";
 

@@ -3,8 +3,8 @@
  * Reuses the existing, unmodified updateRiskAction for the "close" mutation.
  */
 import type { ProjectRisk } from "@/lib/types";
-import { listOrgRisksAction } from "@/lib/server/actions/org-risks";
-import { updateRiskAction } from "@/lib/server/actions/risks";
+import { listOrgRisksAction } from "@/lib/mock-server/actions/org-risks";
+import { updateRiskAction } from "@/lib/mock-server/actions/risks";
 import type { ProjectRiskRow } from "@/lib/server/services/risks";
 import type { ActionResult } from "@/lib/server/errors";
 

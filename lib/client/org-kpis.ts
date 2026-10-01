@@ -4,7 +4,7 @@
  * real `kpis` table (db/migrations/0006) — left undefined, not fabricated.
  */
 import type { KPI } from "@/lib/types";
-import { listOrgKpisAction } from "@/lib/server/actions/org-kpis";
+import { listOrgKpisAction } from "@/lib/mock-server/actions/org-kpis";
 import type { KpiRow } from "@/lib/server/services/measurements";
 import type { ActionResult } from "@/lib/server/errors";
 

@@ -3,7 +3,7 @@
  * (`app/org/my-tasks/page.tsx`).
  */
 import type { ProjectTask } from "@/lib/types";
-import { listOrgTasksAction } from "@/lib/server/actions/org-tasks";
+import { listOrgTasksAction } from "@/lib/mock-server/actions/org-tasks";
 import type { ProjectTaskRow } from "@/lib/server/services/tasks";
 import type { ActionResult } from "@/lib/server/errors";
 

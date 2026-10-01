@@ -2,7 +2,7 @@
  * Client-side data layer for the Org Admin Impact page (`app/org/impact/page.tsx`).
  */
 import type { ImpactMeasurement } from "@/lib/types";
-import { listOrgImpactMeasurementsAction } from "@/lib/server/actions/org-impact";
+import { listOrgImpactMeasurementsAction } from "@/lib/mock-server/actions/org-impact";
 import type { ImpactMeasurementRow } from "@/lib/server/services/measurements";
 import type { ActionResult } from "@/lib/server/errors";
 

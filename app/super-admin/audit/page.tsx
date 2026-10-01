@@ -1,4 +1,4 @@
-import { listPlatformAuditLogsAction } from "@/lib/server/actions/platform-audit";
+import { listPlatformAuditLogsAction } from "@/lib/mock-server/actions/platform-audit";
 import { PageHeader, Card } from "@/components/ui/layout-bits";
 import { AuditLogTable } from "@/components/super-admin/audit-log-table";
 

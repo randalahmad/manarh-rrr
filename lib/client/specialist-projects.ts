@@ -43,11 +43,11 @@
  */
 import type { ProjectListItem } from "@/lib/innovation-specialist/types";
 import type { ProjectStatus as RealProjectStatus } from "@/lib/types";
-import { getSessionUserAction } from "@/lib/server/actions/auth";
-import { listProjectsAction, getProjectAction, transitionProjectStatusAction } from "@/lib/server/actions/projects";
+import { getSessionUserAction } from "@/lib/mock-server/actions/auth";
+import { listProjectsAction, getProjectAction, transitionProjectStatusAction } from "@/lib/mock-server/actions/projects";
 import type { ProjectRow } from "@/lib/server/services/projects";
-import { getIdeaAction } from "@/lib/server/actions/ideas";
-import { getUsersDisplayInfoAction } from "@/lib/server/actions/user-directory";
+import { getIdeaAction } from "@/lib/mock-server/actions/ideas";
+import { getUsersDisplayInfoAction } from "@/lib/mock-server/actions/user-directory";
 import type { ActionResult } from "@/lib/server/errors";
 
 function unwrap<T>(result: ActionResult<T>): T {

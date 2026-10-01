@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getCurrentActor } from "@/lib/server/auth/session";
-import { resolveHomeRoute } from "@/lib/server/routing/home-route";
-import { signOutAction } from "@/lib/server/actions/auth";
+import { getCurrentActor } from "@/lib/mock-server/auth/session";
+import { resolveHomeRoute } from "@/lib/mock-server/routing/home-route";
+import { signOutAction } from "@/lib/mock-server/actions/auth";
 
 // Root entry point for منارة (Manarah).
 // An anonymous visitor sees the static marketing page below. A signed-in

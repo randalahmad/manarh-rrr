@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Building2, CheckCircle2, XCircle, ShieldCheck, ArrowLeft } from "lucide-react";
-import { getPlatformStatsAction } from "@/lib/server/actions/platform-oversight";
+import { getPlatformStatsAction } from "@/lib/mock-server/actions/platform-oversight";
 import { PageHeader, Card, StatCard } from "@/components/ui/layout-bits";
 
 export const dynamic = "force-dynamic";

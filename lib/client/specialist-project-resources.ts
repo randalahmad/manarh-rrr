@@ -46,11 +46,11 @@
  *    real, though, via the Updates tab (STATUS_CHANGE rows written by
  *    transitionProjectStatus).
  */
-import { listRequirementsForProjectAction, createRequirementAction, updateRequirementStatusAction } from "@/lib/server/actions/requirements";
-import { listMilestonesForProjectAction, updateMilestoneStatusAction } from "@/lib/server/actions/milestones";
-import { listProjectUpdatesAction, addProjectUpdateAction } from "@/lib/server/actions/project-updates";
-import { listAttachmentsForEntityAction, deleteAttachmentAction } from "@/lib/server/actions/attachments";
-import { getUsersDisplayInfoAction } from "@/lib/server/actions/user-directory";
+import { listRequirementsForProjectAction, createRequirementAction, updateRequirementStatusAction } from "@/lib/mock-server/actions/requirements";
+import { listMilestonesForProjectAction, updateMilestoneStatusAction } from "@/lib/mock-server/actions/milestones";
+import { listProjectUpdatesAction, addProjectUpdateAction } from "@/lib/mock-server/actions/project-updates";
+import { listAttachmentsForEntityAction, deleteAttachmentAction } from "@/lib/mock-server/actions/attachments";
+import { getUsersDisplayInfoAction } from "@/lib/mock-server/actions/user-directory";
 import type { ProjectRequirementRow } from "@/lib/server/services/requirements";
 import type { ProjectMilestoneRow } from "@/lib/server/services/milestones";
 import type { ActionResult } from "@/lib/server/errors";

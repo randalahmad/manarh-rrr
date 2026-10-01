@@ -15,7 +15,7 @@ import {
   getOrgMemberAction,
   updateOrgMembershipAction,
   setMemberAccountStatusAction,
-} from "@/lib/server/actions/org-users";
+} from "@/lib/mock-server/actions/org-users";
 import type { OrgMemberRow } from "@/lib/server/services/org-users";
 import type { ActionResult } from "@/lib/server/errors";
 

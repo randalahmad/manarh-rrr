@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { listPlatformOrganizationsAction } from "@/lib/server/actions/platform-organizations";
+import { listPlatformOrganizationsAction } from "@/lib/mock-server/actions/platform-organizations";
 import { PageHeader, Card } from "@/components/ui/layout-bits";
 import { Button } from "@/components/ui/button";
 import { OrganizationsTable } from "@/components/super-admin/organizations-table";

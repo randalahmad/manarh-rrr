@@ -2,7 +2,7 @@
  * Client-side data layer for the Org Admin Reports page (`app/org/reports/page.tsx`).
  */
 import type { IdeaStatusHistory } from "@/lib/types";
-import { listOrgIdeaStatusHistoryAction } from "@/lib/server/actions/org-reports";
+import { listOrgIdeaStatusHistoryAction } from "@/lib/mock-server/actions/org-reports";
 import type { IdeaStatusHistoryRow } from "@/lib/server/services/ideas";
 import type { ActionResult } from "@/lib/server/errors";
 

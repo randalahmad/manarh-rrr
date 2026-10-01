@@ -30,13 +30,13 @@
  * aggregates truthfully.
  */
 import type { Idea, IdeaStatusHistory, Evaluation, EvaluatorAssignment, Project } from "@/lib/types";
-import { listIdeasAction } from "@/lib/server/actions/ideas";
+import { listIdeasAction } from "@/lib/mock-server/actions/ideas";
 import type { IdeaRow, IdeaStatusHistoryRow } from "@/lib/server/services/ideas";
-import { listOrgIdeaStatusHistoryAction } from "@/lib/server/actions/org-reports";
-import { listEvaluationsForOrganizationAction, listAssignmentsForOrganizationAction } from "@/lib/server/actions/evaluations";
+import { listOrgIdeaStatusHistoryAction } from "@/lib/mock-server/actions/org-reports";
+import { listEvaluationsForOrganizationAction, listAssignmentsForOrganizationAction } from "@/lib/mock-server/actions/evaluations";
 import type { EvaluatorAssignmentRow } from "@/lib/server/services/evaluator-assignments";
 import type { EvaluationRow } from "@/lib/server/services/evaluations";
-import { listProjectsAction } from "@/lib/server/actions/projects";
+import { listProjectsAction } from "@/lib/mock-server/actions/projects";
 import type { ProjectRow } from "@/lib/server/services/projects";
 import type { ActionResult } from "@/lib/server/errors";
 

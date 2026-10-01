@@ -1,8 +1,8 @@
 import type { Organization } from '@innovator/types/common';
 import { MOCK_ORGANIZATIONS } from './mock/data';
 import { mockDelay } from './mock/utils';
-import { listMyOrganizationsAction } from '@/lib/server/actions/organizations';
-import { listIdeaCategoriesAction } from '@/lib/server/actions/idea-categories';
+import { listMyOrganizationsAction } from '@/lib/mock-server/actions/organizations';
+import { listIdeaCategoriesAction } from '@/lib/mock-server/actions/idea-categories';
 import type { ActionResult } from '@/lib/server/errors';
 
 /** Enough to populate a category `<Select>` — id (submitted to the backend) + display name. */

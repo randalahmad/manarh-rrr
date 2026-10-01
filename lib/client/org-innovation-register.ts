@@ -3,7 +3,7 @@
  * (`app/org/innovation-register/page.tsx`).
  */
 import type { InnovationRecord } from "@/lib/types";
-import { listInnovationRecordsAction } from "@/lib/server/actions/innovation-register";
+import { listInnovationRecordsAction } from "@/lib/mock-server/actions/innovation-register";
 import type { InnovationRecordWithImpact } from "@/lib/server/services/innovation-register";
 import type { ActionResult } from "@/lib/server/errors";
 

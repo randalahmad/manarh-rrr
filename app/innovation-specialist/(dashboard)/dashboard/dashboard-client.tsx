@@ -18,7 +18,7 @@ import { Card, DataTable, KpiCard, PageHeader, StatusBadge } from "@/components/
 import { getCurrentSpecialistSession, fetchReviewQueue, fetchSpecialistCategories } from "@/lib/client/specialist-ideas";
 import { fetchOrgProjects } from "@/lib/client/specialist-projects";
 import { fetchSpecialistNotifications, type SpecialistNotificationView, type SpecialistNotificationBucket } from "@/lib/client/specialist-notifications";
-import { getUsersDisplayInfoAction } from "@/lib/server/actions/user-directory";
+import { getUsersDisplayInfoAction } from "@/lib/mock-server/actions/user-directory";
 import { IDEA_STATUS_LABELS, IDEA_STATUS_TONE, formatDate, timeAgo } from "@/lib/utils";
 import type { Idea } from "@/lib/types";
 

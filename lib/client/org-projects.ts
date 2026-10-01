@@ -27,7 +27,7 @@ import {
   getProjectAction,
   listProjectsAction,
   listProjectOwnerCandidatesAction,
-} from "@/lib/server/actions/projects";
+} from "@/lib/mock-server/actions/projects";
 import type { ProjectRow, ProjectOwnerCandidate } from "@/lib/server/services/projects";
 import type { ActionResult } from "@/lib/server/errors";
 

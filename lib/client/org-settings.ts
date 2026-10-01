@@ -9,7 +9,7 @@ import type { OrganizationSettings } from "@/lib/types";
 import {
   getOrganizationSettingsAction,
   saveOrganizationSettingsAction,
-} from "@/lib/server/actions/organization-settings";
+} from "@/lib/mock-server/actions/organization-settings";
 import type { OrganizationSettingsBundle } from "@/lib/server/services/organization-settings";
 import type { ActionResult } from "@/lib/server/errors";
 

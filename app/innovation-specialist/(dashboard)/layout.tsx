@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { AppShell } from "@/components/innovation-specialist";
-import { getCurrentActor } from "@/lib/server/auth/session";
+import { getCurrentActor } from "@/lib/mock-server/auth/session";
 
 // Server-side route guard, per Phase 6 Group A — see app/org/layout.tsx for
 // the same pattern and rationale (proxy.ts is the primary net).

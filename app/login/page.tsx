@@ -4,8 +4,8 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, Eye, EyeOff } from "lucide-react";
-import { signInAction } from "@/lib/server/actions/auth";
-import { resolveMyHomeRouteAction } from "@/lib/server/actions/routing";
+import { signInAction } from "@/lib/mock-server/actions/auth";
+import { resolveMyHomeRouteAction } from "@/lib/mock-server/actions/routing";
 
 // Same visual identity as the public landing page (app/page.tsx): the dark
 // #0B0F1A palette, Cairo/IBM Plex Sans Arabic fonts, and accent colors
@@ -23,16 +23,9 @@ export default function LoginPage() {
   const [status, setStatus] = useState<"idle" | "loading" | "error" | "success">("idle");
   const [error, setError] = useState("");
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    if (!email || !password) {
-      setStatus("error");
-      setError("الرجاء إدخال البريد الإلكتروني وكلمة المرور.");
-      return;
-    }
+  const signInAs = async (role?: "ORG_ADMIN" | "INNOVATION_SPECIALIST" | "INTERNAL_INNOVATOR" | "SUPER_ADMIN") => {
     setStatus("loading");
-    const result = await signInAction({ email, password });
+    const result = await signInAction({ email: email || "demo@manarah.platform", password: password || "demo", role });
     if (!result.ok) {
       setStatus("error");
       setError(result.message);
@@ -46,6 +39,17 @@ export default function LoginPage() {
       router.push(target);
       router.refresh();
     }, 700);
+  };
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    if (!email || !password) {
+      setStatus("error");
+      setError("الرجاء إدخال البريد الإلكتروني وكلمة المرور.");
+      return;
+    }
+    await signInAs();
   };
 
   const inputClass =
@@ -180,7 +184,15 @@ export default function LoginPage() {
                 </button>
               </form>
 
-              <p className="mt-6 text-center text-xs text-[#6B7594]">أدخل بيانات حسابك الحقيقية للوصول إلى منصة منارة.</p>
+              <div className="mt-7 border-t border-[#1B2138] pt-5">
+                <p className="mb-3 text-center text-xs text-[#6B7594]">نسخة تجريبية بدون قاعدة بيانات — أي بريد وكلمة مرور يعملان، أو اختر واجهة للمعاينة مباشرة:</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <button type="button" onClick={() => signInAs("ORG_ADMIN")} className="rounded-lg border border-[#2B3352] bg-[#0D1220] py-2 text-xs font-medium text-[#EDEFF7] hover:border-[#7FB2F0]">مسؤول الجهة</button>
+                  <button type="button" onClick={() => signInAs("INNOVATION_SPECIALIST")} className="rounded-lg border border-[#2B3352] bg-[#0D1220] py-2 text-xs font-medium text-[#EDEFF7] hover:border-[#7FB2F0]">أخصائي الابتكار</button>
+                  <button type="button" onClick={() => signInAs("INTERNAL_INNOVATOR")} className="rounded-lg border border-[#2B3352] bg-[#0D1220] py-2 text-xs font-medium text-[#EDEFF7] hover:border-[#7FB2F0]">المبتكر</button>
+                  <button type="button" onClick={() => signInAs("SUPER_ADMIN")} className="rounded-lg border border-[#2B3352] bg-[#0D1220] py-2 text-xs font-medium text-[#EDEFF7] hover:border-[#7FB2F0]">مسؤول المنصة</button>
+                </div>
+              </div>
             </>
           )}
         </div>

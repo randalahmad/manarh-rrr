@@ -22,7 +22,7 @@ import {
   listAssignmentsForIdeaAction,
   listEvaluationsForIdeaAction,
   submitEvaluationAction,
-} from "@/lib/server/actions/evaluations";
+} from "@/lib/mock-server/actions/evaluations";
 import type { EvaluatorAssignmentRow } from "@/lib/server/services/evaluator-assignments";
 import type { EvaluationRow } from "@/lib/server/services/evaluations";
 import type { ActionResult } from "@/lib/server/errors";

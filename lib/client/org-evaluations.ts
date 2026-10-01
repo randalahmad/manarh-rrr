@@ -28,14 +28,14 @@ import {
   listEvaluatorCandidatesAction,
   listEvaluationsForOrganizationAction,
   listEvaluationsForIdeaAction,
-} from "@/lib/server/actions/evaluations";
+} from "@/lib/mock-server/actions/evaluations";
 import {
   makeDecisionAction,
   listRecommendationsForOrganizationAction,
   listRecommendationsForIdeaAction,
   listDecisionsForOrganizationAction,
   listDecisionsForIdeaAction,
-} from "@/lib/server/actions/decisions";
+} from "@/lib/mock-server/actions/decisions";
 import type { EvaluatorAssignmentRow, EvaluatorCandidate } from "@/lib/server/services/evaluator-assignments";
 import type { EvaluationRow } from "@/lib/server/services/evaluations";
 import type { RecommendationRow, DecisionRow } from "@/lib/server/services/decisions";

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getCurrentActor } from "@/lib/server/auth/session";
+import { getCurrentActor } from "@/lib/mock-server/auth/session";
 import { SuperAdminShell } from "@/components/super-admin/shell";
 
 /**

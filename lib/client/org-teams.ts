@@ -3,8 +3,8 @@
  * Mirrors lib/client/org-notifications.ts's pattern.
  */
 import type { ActionResult } from "@/lib/server/errors";
-import { listTeamsAction } from "@/lib/server/actions/teams";
-import { getUsersDisplayInfoAction } from "@/lib/server/actions/user-directory";
+import { listTeamsAction } from "@/lib/mock-server/actions/teams";
+import { getUsersDisplayInfoAction } from "@/lib/mock-server/actions/user-directory";
 
 function unwrap<T>(result: ActionResult<T>): T {
   if (!result.ok) {

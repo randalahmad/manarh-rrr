@@ -13,7 +13,7 @@ import {
   listMyNotificationsAction,
   markNotificationReadAction,
   markAllNotificationsReadAction,
-} from "@/lib/server/actions/notifications";
+} from "@/lib/mock-server/actions/notifications";
 import type { NotificationRow } from "@/lib/server/services/notifications";
 import type { ActionResult } from "@/lib/server/errors";
 

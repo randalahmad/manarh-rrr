@@ -7,7 +7,7 @@ import {
   listOpportunitiesAction,
   createOpportunityAction,
   archiveOpportunityAction,
-} from "@/lib/server/actions/opportunities";
+} from "@/lib/mock-server/actions/opportunities";
 import type { OpportunityRow } from "@/lib/server/services/opportunities";
 import type { ActionResult } from "@/lib/server/errors";
 

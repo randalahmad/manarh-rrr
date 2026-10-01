@@ -42,23 +42,23 @@ import type {
   InformationRequest,
   Comment,
 } from "@/lib/types";
-import { getSessionUserAction } from "@/lib/server/actions/auth";
+import { getSessionUserAction } from "@/lib/mock-server/actions/auth";
 import {
   getIdeaAction,
   listIdeasAction,
   transitionIdeaStatusAction,
   listIdeaStatusHistoryAction,
-} from "@/lib/server/actions/ideas";
+} from "@/lib/mock-server/actions/ideas";
 import type { IdeaRow, IdeaStatusHistoryRow } from "@/lib/server/services/ideas";
-import { listIdeaCategoriesAction } from "@/lib/server/actions/idea-categories";
+import { listIdeaCategoriesAction } from "@/lib/mock-server/actions/idea-categories";
 import type { IdeaCategoryRow } from "@/lib/server/services/idea-categories";
-import { getUsersDisplayInfoAction } from "@/lib/server/actions/user-directory";
+import { getUsersDisplayInfoAction } from "@/lib/mock-server/actions/user-directory";
 import {
   createInformationRequestAction,
   listInformationRequestsAction,
-} from "@/lib/server/actions/information-requests";
+} from "@/lib/mock-server/actions/information-requests";
 import type { InformationRequestRow } from "@/lib/server/services/information-requests";
-import { addCommentAction, listCommentsForEntityAction } from "@/lib/server/actions/comments";
+import { addCommentAction, listCommentsForEntityAction } from "@/lib/mock-server/actions/comments";
 import type { CommentRow } from "@/lib/server/services/comments";
 import type { ActionResult } from "@/lib/server/errors";
 

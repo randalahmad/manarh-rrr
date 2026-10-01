@@ -6,7 +6,7 @@ import { PageHeader, Card } from "@/components/ui/layout-bits";
 import { FormField, Input, Textarea } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
-import { createPlatformOrganizationAction } from "@/lib/server/actions/platform-organizations";
+import { createPlatformOrganizationAction } from "@/lib/mock-server/actions/platform-organizations";
 
 interface FormState {
   name: string;

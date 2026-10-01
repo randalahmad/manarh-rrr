@@ -8,7 +8,7 @@
  * the mock shape this page used to render.
  */
 import type { AuditLog } from "@/lib/types";
-import { listAuditLogsAction } from "@/lib/server/actions/audit-logs";
+import { listAuditLogsAction } from "@/lib/mock-server/actions/audit-logs";
 import type { AuditLogRow } from "@/lib/server/services/audit-logs";
 import type { ActionResult } from "@/lib/server/errors";
 

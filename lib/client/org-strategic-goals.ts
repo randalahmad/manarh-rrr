@@ -23,7 +23,7 @@ import type { StrategicGoal } from "@/lib/types";
 import {
   createStrategicGoalAction,
   listStrategicGoalsAction,
-} from "@/lib/server/actions/strategic-goals";
+} from "@/lib/mock-server/actions/strategic-goals";
 import type { StrategicGoalRow } from "@/lib/server/services/strategic-goals";
 import type { ActionResult } from "@/lib/server/errors";
 

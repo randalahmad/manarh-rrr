@@ -18,7 +18,7 @@
  * avatarUrl, organizationId, role).
  */
 import { useEffect, useState } from "react";
-import { getSessionUserAction, type SessionUser } from "@/lib/server/actions/auth";
+import { getSessionUserAction, type SessionUser } from "@/lib/mock-server/actions/auth";
 
 export interface UseSessionUserResult {
   sessionUser: SessionUser | null;
